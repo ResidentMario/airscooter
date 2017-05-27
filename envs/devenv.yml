@@ -1,0 +1,6 @@
+name: urban-physiology
+dependencies:
+  - pandas
+  - jupyter
+  - requests
+  - nbformat
