@@ -1,0 +1,1 @@
+PYTHONPATH="." luigi --module run_luigi SquaredNumbers --local-scheduler
