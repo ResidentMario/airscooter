@@ -1,16 +1,12 @@
-import nbformat
-import nbconvert
-
 import sys; sys.path.append("../")
-from datablocks.action import Action
-
 import luigi
-from nbconvert.preprocessors.execute import CellExecutionError
 
 
-class Transform(luigi.Task):
+class Reducer(luigi.Task):
     """Foo."""
     fp = luigi.Parameter()
+    requirements = luigi.ListParameter()
+
     # nb = nbformat.read(fp, nbformat.current_nbformat)
     # self.actions = parse_actions(nb)
     # self.success = all(action.success for action in self.actions)

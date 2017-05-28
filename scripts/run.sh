@@ -1,1 +1,1 @@
-PYTHONPATH="." luigi --module run_luigi SquaredNumbers --local-scheduler
+PYTHONPATH="." luigi --module transform Transform --local-scheduler --fp="./test-notebook.ipynb"  --requirements=[]
