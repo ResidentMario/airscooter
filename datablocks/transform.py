@@ -11,6 +11,8 @@ from nbconvert.preprocessors.execute import CellExecutionError
 class Transform(luigi.Task):
     """Foo."""
     fp = luigi.Parameter()
+    requirements = luigi.ListParameter()
+    outdir = luigi.Parameter()
     # nb = nbformat.read(fp, nbformat.current_nbformat)
     # self.actions = parse_actions(nb)
     # self.success = all(action.success for action in self.actions)
@@ -24,13 +26,15 @@ class Transform(luigi.Task):
         ep = nbconvert.preprocessors.ExecutePreprocessor(timeout=600, kernel_name='python3')
         try:
             ep.preprocess(nb, {'metadata': {'path': "/".join(self.fp.split("/")[:-1])}})
-            with open(self.fp, 'wt') as f:
+            with self.output().open('w') as f:
                 nbformat.write(nb, f)
         except CellExecutionError:
-            with open(self.fp, 'wt') as f:
+            with self.output().open('w') as f:
                 nbformat.write(nb, f)
             raise
 
+    def output(self):
+        return luigi.LocalTarget(self.fp)
 
 # TODO: Incorporate this.
 def parse_actions(nb):
