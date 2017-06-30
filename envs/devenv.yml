@@ -4,3 +4,5 @@ dependencies:
   - jupyter
   - requests
   - nbformat
+  - pip:
+    - apache-airflow

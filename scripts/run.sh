@@ -1,1 +1,0 @@
-PYTHONPATH="." luigi --module transform Transform --local-scheduler --fp="./test-notebook.ipynb"  --requirements=[]
