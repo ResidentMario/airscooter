@@ -12,14 +12,16 @@ class Transform:
         self.output = output
         self.requirements = [] if requirements is None else requirements
 
-    def opify(self):
+    def opify(self, dag):
         """
         Returns the requisite Airflow operator for performing the targeted operation.
         """
-        op_type = self.filename.split(".")[1][1:]
+        op_type = self.filename.split(".")[1]
         if op_type == "sh":
             # noinspection PyUnresolvedReferences
-            return operators.BashOperator(self.filename)
+            return operators.BashOperator(bash_command=self.filename,
+                                          task_id=self.filename.split(".")[0],
+                                          dag=dag)
         else:
             # TODO
             pass
