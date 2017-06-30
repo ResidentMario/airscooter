@@ -1,28 +1,36 @@
-import nbformat
-import nbconvert
+# import nbformat
+# import nbconvert
+# from nbconvert.preprocessors.execute import CellExecutionError
+from airflow import operators
 
-import luigi
-from nbconvert.preprocessors.execute import CellExecutionError
 
-
-class Transform(luigi.Task):
+class Transform:
     """Foo."""
-    notebook = luigi.Parameter()
-    requirements = luigi.ListParameter()
+    def __init__(self, filename, input, output, requirements=None):
+        self.filename = filename
+        self.input = input
+        self.output = output
+        self.requirements = [] if requirements is None else requirements
 
-    def requires(self):
-        return self.requirements
+    def opify(self):
+        """
+        Returns the requisite Airflow operator for performing the targeted operation.
+        """
+        op_type = self.filename.split(".")[1][1:]
+        if op_type == "sh":
+            # noinspection PyUnresolvedReferences
+            return operators.BashOperator(self.filename)
+        else:
+            # TODO
+            pass
 
-    def run(self):
-        nb = nbformat.read(self.notebook, nbformat.current_nbformat)
-        # https://nbconvert.readthedocs.io/en/latest/execute_api.html
-        ep = nbconvert.preprocessors.ExecutePreprocessor(timeout=600, kernel_name='python3')
-        try:
-            ep.preprocess(nb, {'metadata': {'path': "/".join(self.notebook.split("/")[:-1])}})
-            with self.output().open('w') as f:
-                nbformat.write(nb, f)
-        except CellExecutionError:
-            pass  # TODO
-
-    def output(self):
-        return luigi.LocalTarget(self.notebook)
+    # def run2(self):
+    #     nb = nbformat.read(self.notebook, nbformat.current_nbformat)
+    #     # https://nbconvert.readthedocs.io/en/latest/execute_api.html
+    #     ep = nbconvert.preprocessors.ExecutePreprocessor(timeout=600, kernel_name='python3')
+    #     try:
+    #         ep.preprocess(nb, {'metadata': {'path': "/".join(self.notebook.split("/")[:-1])}})
+    #         with self.output().open('w') as f:
+    #             nbformat.write(nb, f)
+    #     except CellExecutionError:
+    #         pass  # TODO
