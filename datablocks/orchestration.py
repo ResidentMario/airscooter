@@ -39,7 +39,8 @@ def create_dag(depositors=None, transforms=None):
         tasks = create_links(transform, dag)
 
     # Add tasks to the graph.
-    # TODO: This raises a depracataion warning because we are adding a task to the graph multiple times. Investigate.
+    # TODO: This raises a depracataion warning because we are adding a task to the graph multiple times.
+    # Investigate doing this a better way.
     for task in tasks:
         dag.add_task(task)
 
@@ -62,3 +63,8 @@ def create_links(transform, dag):
         return ops
     else:
         return [transform.opify(dag)]
+
+
+def run(dag):
+    # TODO: https://airflow.incubator.apache.org/code.html?highlight=dag_run#airflow.operators.TriggerDagRunOperator
+    pass
