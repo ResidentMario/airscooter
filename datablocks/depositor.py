@@ -1,13 +1,14 @@
 from airflow import operators
+import yaml
 
 
 class Depositor:
     """Foo."""
-    def __init__(self, filename, output, dummy=False):
+    def __init__(self, name, filename, output, dummy=False):
+        self.name = name
         self.filename = filename
         self.output = output
         self.dummy = dummy
-        self.requirements = None
 
     def opify(self, dag):
         """
@@ -22,3 +23,9 @@ class Depositor:
         else:
             # TODO
             pass
+
+    def datafy(self):
+        return {'name': self.name,
+                'filename': self.filename,
+                'output': self.output,
+                'type': 'depositor'}
