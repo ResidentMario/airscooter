@@ -14,20 +14,6 @@ class Transform:
         self.output = output
         self.requirements = [] if requirements is None else requirements
 
-    def opify(self, dag):
-        """
-        Returns the requisite Airflow operator for performing the targeted operation.
-        """
-        op_type = self.filename.split(".")[1]
-        if op_type == "sh":
-            # noinspection PyUnresolvedReferences
-            return operators.BashOperator(bash_command=self.filename,
-                                          task_id=self.filename.split(".")[0],
-                                          dag=dag)
-        else:
-            # TODO
-            pass
-
     def datafy(self):
         return {'name': self.name,
                 'filename': self.filename,
@@ -36,7 +22,28 @@ class Transform:
                 'requirements': [r.name for r in self.requirements],
                 'type': 'transform'}
 
-    # def run2(self):
+    def as_airflow_string(self):
+        op_type = self.filename.split(".")[1]
+        if op_type == "sh":
+            # noinspection PyUnresolvedReferences
+            return """operators.BashOperator(bash_command={0}, task_id={1}, dag="dag")
+""".format(self.filename, self.filename.split(".")[0])
+
+    # def opify(self, dag):
+    #     """
+    #     Returns the requisite Airflow operator for performing the targeted operation.
+    #     """
+    #     op_type = self.filename.split(".")[1]
+    #     if op_type == "sh":
+    #         # noinspection PyUnresolvedReferences
+    #         return operators.BashOperator(bash_command=self.filename,
+    #                                       task_id=self.filename.split(".")[0],
+    #                                       dag=dag)
+    #     else:
+    #         # TODO
+    #         pass
+
+            # def run2(self):
     #     nb = nbformat.read(self.notebook, nbformat.current_nbformat)
     #     # https://nbconvert.readthedocs.io/en/latest/execute_api.html
     #     ep = nbconvert.preprocessors.ExecutePreprocessor(timeout=600, kernel_name='python3')
