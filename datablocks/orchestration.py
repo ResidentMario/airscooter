@@ -21,14 +21,14 @@ default_args = {
 }
 
 
-def marshal_tasks(tasks):
+def serialize_tasks(tasks):
     tasks_yml = [task.datafy() for task in tasks]
     yml_repr = yaml.dump({'tasks': tasks_yml})
     return yml_repr
 
 
 def write_yml(tasks, yml_filename):
-    yml_repr = marshal_tasks(tasks)
+    yml_repr = serialize_tasks(tasks)
 
     with open(yml_filename, "w") as f:
         f.write(yml_repr)
