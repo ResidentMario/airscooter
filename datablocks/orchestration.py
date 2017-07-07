@@ -1,3 +1,5 @@
+"""Orchestration layer."""
+
 import airflow
 import datetime
 import yaml
@@ -22,19 +24,58 @@ default_args = {
 
 
 def serialize_tasks(tasks):
+    """
+    Transforms a list of tasks into a YAML serialization thereof.
+
+    Requires
+    --------
+    tasks: list, required
+        A list of tasks.
+
+    Returns
+    -------
+    yml_repr, str
+        A YAML serialization thereof.
+
+    """
     tasks_yml = [task.datafy() for task in tasks]
     yml_repr = yaml.dump({'tasks': tasks_yml})
     return yml_repr
 
 
 def write_yml(tasks, yml_filename):
+    """
+    Given a list of tasks, writes a simplified YAML serialization thereof to a file. This method enables task graph
+    persistence: at the CLI level, additional tasks getting written to the graph check and write to this data to
+    maintain a consistent state.
+
+    Requires
+    --------
+    tasks: list, required
+        A list of tasks.
+    yml_filename: str, required
+        The filename to which the YAML representation will be written.
+    """
     yml_repr = serialize_tasks(tasks)
 
     with open(yml_filename, "w") as f:
         f.write(yml_repr)
 
 
-def reconstitute_objects(yml_data):
+def deserialize(yml_data):
+    """
+    Given a task graph YAML serialization, returns the list of datablocks objects (Transform and Depositor objects)
+    making up this task graph.
+
+    Parameters
+    ----------
+    yml_data: str, required
+        The YAML representation being deserialized.
+
+    Returns
+    -------
+    The resultant datablocks task list.
+    """
     hash_table = dict()
     tasks = []
     for task_repr in yml_data['tasks']:
@@ -61,14 +102,39 @@ def reconstitute_objects(yml_data):
     return tasks
 
 
-def reconstitute_objects_from_file(yml_filename):
+def deserialize_from_file(yml_filename):
+    """
+    Given a task graph YAML serialization, returns the constituent list of datablocks task graph objects. I/O wrapper
+    for `deserialize`.
+
+    Parameters
+    ----------
+    yml_filename: str, required
+        The name of the file the data will be read in from.
+
+    Returns
+    -------
+    The resultant datablocks task list.
+    """
     with open(yml_filename, "r") as f:
         yml_data = yaml.load(f.read())
 
-    return reconstitute_objects(yml_data)
+    return deserialize(yml_data)
 
 
 def create_airflow_string(tasks):
+    """
+    Given a task graph (as a list of tasks), generates an Airflow DAG file.
+
+    Parameters
+    ----------
+    tasks: list of {Transform, Depositor} objects, required
+        The tasks constituting the task graph to be written as a DAG.
+
+    Returns
+    -------
+    The Airflow DAG as a string, ready to be written to the file.
+    """
     ret_str = """
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
@@ -93,11 +159,9 @@ dag = DAG('tutorial_2', default_args=default_args, schedule_interval=timedelta(1
     """
 
     dependencies_str = ""
-    # tasks_hash_table = dict()
 
     for i, task in enumerate(tasks):
         ret_str += "\n\n" + task.name + " = " + task.as_airflow_string()
-        # tasks_hash_table[task.name] = task
 
     for i, task in enumerate(tasks):
         if hasattr(task, "requirements"):
@@ -107,53 +171,17 @@ dag = DAG('tutorial_2', default_args=default_args, schedule_interval=timedelta(1
     ret_str = ret_str + dependencies_str
     return ret_str
 
-# def create_dag(depositors=None, transforms=None):
-#     """
-#     Creates a DAG by composing inputted elements.
-#     """
-#     depositors = [] if depositors is None else depositors
-#     transforms = [] if transforms is None else transforms
-#
-#     # Initialize the DAG.
-#     dag = airflow.DAG('my_task', default_args=default_args)
-#
-#     # Create operations.
-#     import pdb; pdb.set_trace()
-#     # depositor_ops = [depositor.opify() for depositor in depositors]
-#     # transform_ops = [transform.opify() for transform in transforms]
-#     # transform_requirements = [transform.requirements for transform in transforms]
-#
-#     # Link operations.
-#     for transform in transforms:
-#         tasks = create_links(transform, dag)
-#
-#     # Add tasks to the graph.
-#     # TODO: This raises a depracataion warning because we are adding a task to the graph multiple times.
-#     # Investigate doing this a better way.
-#     for task in tasks:
-#         dag.add_task(task)
-#
-#     return dag
-#
-#
-# def create_links(transform, dag):
-#     """
-#     Recursively create the job links.
-#     """
-#     # TODO
-#     if transform.requirements:
-#         ops = []
-#         this_op = transform.opify(dag)
-#         ops.append(this_op)
-#         for prior_transform in transform.requirements:
-#             ops += create_links(prior_transform, dag)
-#             prior_op = prior_transform.opify(dag)
-#             this_op.set_upstream(prior_op)
-#         return ops
-#     else:
-#         return [transform.opify(dag)]
-#
-#
-# def run(dag):
-#     # TODO: https://airflow.incubator.apache.org/code.html?highlight=dag_run#airflow.operators.TriggerDagRunOperator
-#     pass
+
+def write_airflow_string(tasks, filename):
+    """
+    Writes the Airflow DAG file for the given tasks. I/O wrapper for `create_airflow_string`.
+
+    Parameters
+    ----------
+    tasks: list of {Transform, Depositor} objects, required
+        The tasks constituting the task graph to be written as a DAG.
+    filename: str, required
+        The filename the DAG will be written to.
+    """
+    with open(filename, "w") as f:
+        f.write(create_airflow_string(tasks))
