@@ -201,7 +201,7 @@ def configure(localize=True, local_folder=".airflow"):
         If localize is set to False, datablocks will inherit the current global Airflow settings. This is the vanilla
         behavior, and may be preferable in advanced circumstances (which ones TBD).
 
-    local_folder, str, default ".airflow"
+    local_folder: str, default ".airflow"
         The name of the local folder that the DAG gets written to. Datablocks configures Airflow to work against this
         folder.
     """
