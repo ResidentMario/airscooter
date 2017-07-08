@@ -184,3 +184,25 @@ def write_airflow_string(tasks, filename):
     """
     with open(filename, "w") as f:
         f.write(create_airflow_string(tasks))
+
+
+def configure(localize=True, local_folder=".airflow"):
+    """
+    Configures Airflow for use within Datablocks.
+
+    Parameters
+    ----------
+    localize: bool, default True
+        By default, overwrite the AIRFLOW_HOME environment variable and the values set in the airflow.cfg file to
+        point at a local ".airflow" folder. This is desirable behavior for maintaining several separable DAGs on one
+        machine, with each DAG corresponding with a single directory, and thus a single project or git repository
+        thereof.
+
+        If localize is set to False, datablocks will inherit the current global Airflow settings. This is the vanilla
+        behavior, and may be preferable in advanced circumstances (which ones TBD).
+
+    local_folder, str, default ".airflow"
+        The name of the local folder that the DAG gets written to. Datablocks configures Airflow to work against this
+        folder.
+    """
+    pass
