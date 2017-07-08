@@ -36,14 +36,13 @@ def serialize_tasks(tasks):
     -------
     yml_repr, str
         A YAML serialization thereof.
-
     """
-    tasks_yml = [task.datafy() for task in tasks]
-    yml_repr = yaml.dump({'tasks': tasks_yml})
+    tasks_dict = [task.datafy() for task in tasks]
+    yml_repr = yaml.dump({'tasks': tasks_dict})
     return yml_repr
 
 
-def write_yml(tasks, yml_filename):
+def serialize_to_file(tasks, yml_filename):
     """
     Given a list of tasks, writes a simplified YAML serialization thereof to a file. This method enables task graph
     persistence: at the CLI level, additional tasks getting written to the graph check and write to this data to

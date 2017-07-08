@@ -48,5 +48,5 @@ class Depositor:
         """
         op_type = self.filename.split(".")[1]
         if op_type == "sh":
-            return """operators.BashOperator(bash_command={0}, task_id={1}, dag="dag")
+            return """BashOperator(bash_command="{0}", task_id="{1}", dag=dag)
 """.format(self.filename, self.filename.split(".")[0])
