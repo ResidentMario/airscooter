@@ -7,6 +7,8 @@ from airflow import DAG
 
 from datetime import datetime, timedelta
 import os
+import shutil
+import subprocess
 
 import unittest
 import pytest
@@ -81,12 +83,12 @@ class TestOrchestrationSerialization(unittest.TestCase):
         self.trans_sh = Transform("TestTransform", "foo2.sh", "foo.csv", "foo2.csv", requirements=[self.dep_sh])
         self.dag = DAG('dag', default_args=default_args)
 
-    def test_serialization(self):
+    def test_deserialization(self):
+        # Serialization test.
         orchestration.serialize_to_file([self.dep_sh, self.trans_sh], "foo.yml")
         assert "foo.yml" in os.listdir(".")
 
-    def test_deserialization(self):
-        import pdb; pdb.set_trace()
+        # Deserialization test.
         dag_objects = orchestration.deserialize_from_file("foo.yml")
 
         assert len(dag_objects) == 2
@@ -103,6 +105,15 @@ class TestOrchestrationSerialization(unittest.TestCase):
         expected.pop('requirements')
         assert result == expected
 
+    def tearDown(self):
+        if 'foo.yml' in os.listdir("."):
+            os.remove('foo.yml')
+
+
+def test_orchestration_configure():
+    orchestration.configure()
+    assert os.environ['AIRFLOW_HOME'] == os.path.abspath("./.airflow")
+
 
 class TestOrchestrationAirflowString(unittest.TestCase):
     def setUp(self):
@@ -110,21 +121,29 @@ class TestOrchestrationAirflowString(unittest.TestCase):
         self.trans_sh = Transform("TestTransform", "foo2.sh", "foo.csv", "foo2.csv", requirements=[self.dep_sh])
         self.dag = DAG('dag', default_args=default_args)
 
-        with open("foo.sh", "w") as f:
+        if ".airflow" not in os.listdir("."):
+            os.mkdir(".airflow")
+        if "dags" not in os.listdir(".airflow"):
+            os.mkdir(".airflow/dags")
+
+        with open(".airflow/dags/foo.sh", "w") as f:
             f.write("printf 'a,b,c\n1,2,3' >> foo.csv")
 
-        with open("foo2.sh", "w") as f:
+        with open(".airflow/dags/foo2.sh", "w") as f:
             f.write("echo HELLO")
 
     def test_write(self):
-        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "foo_dag.py")
-        assert "foo_dag.py" in os.listdir(".")
+        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/datablocks_dag.py")
+        assert "datablocks_dag.py" in os.listdir(".airflow/dags/")
 
-    def test_run(self):
+    def test_write_airflow_availability(self):
         # TODO
-        pass
+        if 'AIRFLOW_HOME' not in os.environ:
+            orchestration.configure()
+
+        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/datablocks_dag.py")
+        status_code = subprocess.call(["airflow", "list_dags"], env=os.environ.copy())
+        assert status_code == 0
 
     def tearDown(self):
-        for filename in ['foo.sh', 'foo.csv', 'foo2.sh', 'foo_dag.py', 'foo.yml']:
-            if filename in os.listdir("."):
-                os.remove(filename)
+        shutil.rmtree(".airflow")

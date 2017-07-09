@@ -5,7 +5,8 @@ import datetime
 import yaml
 from .transform import Transform
 from .depositor import Depositor
-
+import os
+import subprocess
 
 default_args = {
     'owner': 'airflow',
@@ -154,7 +155,7 @@ default_args = {
     # 'end_date': datetime(2016, 1, 1),
 }
 
-dag = DAG('tutorial_2', default_args=default_args, schedule_interval=timedelta(1))
+dag = DAG('datablocks_dag', default_args=default_args, schedule_interval=timedelta(1))
     """
 
     dependencies_str = ""
@@ -186,7 +187,7 @@ def write_airflow_string(tasks, filename):
         f.write(create_airflow_string(tasks))
 
 
-def configure(localize=True, local_folder=".airflow"):
+def configure(localize=True, local_folder=".airflow", init=False):
     """
     Configures Airflow for use within Datablocks.
 
@@ -200,9 +201,22 @@ def configure(localize=True, local_folder=".airflow"):
 
         If localize is set to False, datablocks will inherit the current global Airflow settings. This is the vanilla
         behavior, and may be preferable in advanced circumstances (which ones TBD).
-
     local_folder: str, default ".airflow"
         The name of the local folder that the DAG gets written to. Datablocks configures Airflow to work against this
         folder.
+    int, bool, default False
+        Whether or not to initialize the database.
     """
-    pass
+    if localize:
+        os.environ['AIRFLOW_HOME'] = os.path.abspath("./.airflow")
+        print(os.path.abspath("./.airflow"))
+        dag_folder_path = "./{0}".format(local_folder)
+        if not os.path.isdir("./.airflow"):
+            os.mkdir(dag_folder_path)
+
+    if init:
+        subprocess.call(["airflow", "initdb"], env=os.environ.copy())  # resetdb?
+
+
+def run(dag_id):
+    subprocess.call(["airflow", "trigger_dag", dag_id])
