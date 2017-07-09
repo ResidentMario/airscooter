@@ -4,5 +4,9 @@ dependencies:
   - jupyter
   - requests
   - nbformat
+  - pytest
   - pip:
     - apache-airflow
+    - prompt_toolkit
+    - pyyaml
+    - click

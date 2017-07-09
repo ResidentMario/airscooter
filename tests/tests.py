@@ -137,13 +137,14 @@ class TestOrchestrationAirflowString(unittest.TestCase):
         assert "datablocks_dag.py" in os.listdir(".airflow/dags/")
 
     def test_write_airflow_availability(self):
-        # TODO
         if 'AIRFLOW_HOME' not in os.environ:
             orchestration.configure()
 
         orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/datablocks_dag.py")
-        status_code = subprocess.call(["airflow", "list_dags"], env=os.environ.copy())
-        assert status_code == 0
+        # Note: subprocess.run is Python 3.5+.
+        result = subprocess.run(["airflow", "list_dags"], env=os.environ.copy(), stdout=subprocess.PIPE).stdout
+        expected = b"datablocks_dag"
+        assert expected in result
 
     def tearDown(self):
         shutil.rmtree(".airflow")
