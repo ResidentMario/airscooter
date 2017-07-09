@@ -35,22 +35,37 @@ def link(task, inputs, outputs):
     _outputs = literal_eval(outputs) if outputs[0] == "[" else [outputs]
     _inputs = None if inputs is None else literal_eval(inputs) if inputs[0] == "[" else [inputs]
     task_id = task.split(".")[0]
+    is_transform = inputs is not None
 
-    if inputs is None:
-        # depositor
-        _task = Depositor(task_id, task, _outputs)
+    if is_transform:
+        _task = Transform(task_id, task, _inputs, _outputs, requirements=[])
     else:
-        # transform
-        pass
+        # must be a depositor then
+        _task = Depositor(task_id, task, _outputs)
 
     if "datablocks.yml" not in os.listdir(".airflow"):
         graph = []
     else:
         graph = deserialize_from_file("./.airflow/datablocks.yml")
 
-    # Write the update to file.
-    # TODO: deal with doubled declarations (e.g. running the same command twice)
-    graph.append(_task)
+    # Before writing to file, check to make sure that this task is not already in the graph.
+    if _task.name not in [task.name for task in graph]:
+        # In the case of a transform, we need to assign requirements manually before serialization.
+        if is_transform:
+            existing_outputs = [task.output for task in graph]
+            # Is this input already an output of some process in task graph?
+            # Add it as a requirement if yes, raise if no.
+            for input in _inputs:
+                try:
+                    output_index = existing_outputs.index(input)
+                    _task.requirements.append(graph[output_index])
+                except ValueError:
+                    raise ValueError("This task depends on files that are not yet in the task graph.")
+
+        graph.append(_task)
+    else:
+        raise ValueError("The given script is already included in the task graph.")
+
     serialize_to_file(graph, "./.airflow/datablocks.yml")
 
     click.echo(task + "\n" + str(inputs) + "\n" + str(outputs))
