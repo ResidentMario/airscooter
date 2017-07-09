@@ -23,6 +23,5 @@ cli.add_command(init)
 #     """Simple program that greets NAME for a total of COUNT times."""
 #     for x in range(5):
 #         click.echo('Hello %s!' % x)
-
-if __name__ == '__main__':
-    cli()
+# if __name__ == '__main__':
+#     cli()

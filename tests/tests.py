@@ -11,7 +11,7 @@ import shutil
 import subprocess
 
 import unittest
-import pytest
+# import pytest
 
 
 # Default DAG arguments.
