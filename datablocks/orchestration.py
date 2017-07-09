@@ -1,6 +1,6 @@
 """Orchestration layer."""
 
-import airflow
+# import airflow
 import datetime
 import yaml
 from .transform import Transform
@@ -204,7 +204,7 @@ def configure(localize=True, local_folder=".airflow", init=False):
     local_folder: str, default ".airflow"
         The name of the local folder that the DAG gets written to. Datablocks configures Airflow to work against this
         folder.
-    int, bool, default False
+    init: bool, default False
         Whether or not to initialize the database.
     """
     if localize:
