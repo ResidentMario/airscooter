@@ -1,3 +1,5 @@
+"""Tests that ascertain that the API is working."""
+
 import sys; sys.path.append("../")
 from datablocks.depositor import Depositor
 from datablocks.transform import Transform
