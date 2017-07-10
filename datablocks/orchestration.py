@@ -203,4 +203,4 @@ def configure(localize=True, local_folder=".airflow", init=False):
 
 
 def run(dag_id):
-    subprocess.call(["airflow", "trigger_dag", dag_id])
+    subprocess.call(["airflow", "trigger_dag", dag_id], env=os.environ.copy())

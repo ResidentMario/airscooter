@@ -3,6 +3,7 @@ from .orchestration import *
 from .depositor import Depositor
 from .transform import Transform
 import os
+import itertools
 
 from ast import literal_eval
 
@@ -29,8 +30,6 @@ def reset():
 @click.option('--inputs', help='A filename or list of filenames for data being inputted.')
 @click.option('--outputs', help='A filename or list of filenames for data being outputted.')
 def link(task, inputs, outputs):
-    import pdb; pdb.set_trace()
-
     if outputs is None:
         raise ValueError("No output filenames provided.")
 
@@ -54,7 +53,7 @@ def link(task, inputs, outputs):
     if _task.name not in [task.name for task in graph]:
         # In the case of a transform, we need to assign requirements manually before serialization.
         if is_transform:
-            existing_outputs = [task.output for task in graph]
+            existing_outputs = list(itertools.chain(*[task.output for task in graph]))
             # Is this input already an output of some process in task graph?
             # Add it as a requirement if yes, raise if no.
             for input in _inputs:
