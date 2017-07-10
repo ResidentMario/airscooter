@@ -202,5 +202,13 @@ def configure(localize=True, local_folder=".airflow", init=False):
         subprocess.call(["airflow", "initdb"], env=os.environ.copy())  # resetdb?
 
 
-def run(dag_id):
-    subprocess.call(["airflow", "trigger_dag", dag_id], env=os.environ.copy())
+def run():
+    webserver_process = subprocess.Popen(["airflow", "webserver"])
+    scheduler_process = subprocess.Popen(["airflow", "scheduler"])
+
+    try:
+        subprocess.call(["airflow", "trigger_dag", "datablocks_dag"], env=os.environ.copy())
+        import pdb; pdb.set_trace()
+    finally:
+        webserver_process.kill()
+        scheduler_process.kill()

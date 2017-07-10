@@ -46,7 +46,7 @@ class Depositor:
         orchestration layer for instantiating the Airflow DAG. However, it is incomplete, because it does not set
         any task dependencies, which are handled separately in orchestration.
         """
-        op_type = self.filename.split(".")[1]
+        op_type = self.filename.rsplit(".")[-1]
         if op_type == "sh":
             return """BashOperator(bash_command="{0}", task_id="{1}", dag=dag)
-""".format(self.filename, self.filename.split(".")[0])
+""".format(self.filename, ".".join(self.filename.rsplit(".")[:-1]))
