@@ -1,4 +1,7 @@
-"""Tests that ascertain that the API is working."""
+"""
+Tests that ascertain that the API is working. Everything short of actually running a DAG (expensive and
+difficult-to-test, see `dag_tests.py`) is tested here.
+"""
 
 import sys; sys.path.append("../")
 from datablocks.depositor import Depositor

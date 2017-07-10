@@ -73,4 +73,5 @@ def link(task, inputs, outputs):
     click.echo(_task)
 
 cli.add_command(init)
+cli.add_command(reset)
 cli.add_command(link)

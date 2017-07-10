@@ -53,6 +53,14 @@ class TestLink(unittest.TestCase):
         assert "test_transform.py" in [task.filename for task in graph]
 
 
+class TestRun(unittest.TestCase):
+    # At this point we have created a DAG with a depositor job that creates bar.txt, and a DAG with a transform job
+    # that goes bar.txt --> bar2.txt. To test running our DAG, let's set these up as real entities.
+
+    def setUp(self):
+        pass
+
+
 @pytest.mark.run(order=5)
 def test_tear_down():
     # tearDown has to be done here, because a unittest tearDown in TestLink can surprisingly can run before the tests
