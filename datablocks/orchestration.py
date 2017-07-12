@@ -208,10 +208,16 @@ def run():
     scheduler_process = subprocess.Popen(["airflow", "scheduler"])
 
     try:
+        import pdb; pdb.set_trace()
         # subprocess.run(["airflow", "list_dags"], env=os.environ.copy(), stdout=subprocess.PIPE).stdout
         # https://issues.apache.org/jira/browse/AIRFLOW-43
         subprocess.call(["airflow", "unpause", "datablocks_dag"], env=os.environ.copy())
+        # This wait is included because otherwise the un-pause doesn't kick in before the trigger_dag command is run.
+        # TODO: Improve on this.
         subprocess.call(["airflow", "trigger_dag", "datablocks_dag"], env=os.environ.copy())
+        # TODO: Improve on this.
+        # import time; time.sleep(5)
     finally:
+        # TODO: https://stackoverflow.com/questions/45064030/airflow-webserver-launched-via-subprocess-not-dying-on-kill
         webserver_process.kill()
         scheduler_process.kill()
