@@ -12,10 +12,8 @@ from airflow import DAG
 from datetime import datetime, timedelta
 import os
 import shutil
-import subprocess
 
 import unittest
-# import pytest
 
 
 # Default DAG arguments.
@@ -27,12 +25,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 0,
-    'retry_delay': timedelta(minutes=5),
     'schedule_interval': None
-    # 'queue': 'bash_queue',
-    # 'pool': 'backfill',
-    # 'priority_weight': 10,
-    # 'end_date': datetime(2016, 1, 1),
 }
 
 
@@ -52,23 +45,23 @@ class TestRun(unittest.TestCase):
         if "temp" not in os.listdir(".airflow"):
             os.mkdir(".airflow/temp")
 
-        with open(".airflow/temp/foo.sh", "w") as f:
-            # f.write("echo HELLO")
-            f.write("printf 'a,b,c\n1,2,3' >> ~/Desktop/foo.csv")
+        self.write_dir = os.getcwd() + "/.airflow/temp/"
 
-        # with open(".airflow/temp/foo2.sh", "w") as f:
-        #     f.write("printf 'Success!' >> success.txt")
+        with open(self.write_dir + "foo.sh", "w") as f:
+            f.write("printf 'a,b,c\n1,2,3' >> {0}/foo.csv".format(self.write_dir))
 
-        orchestration.write_airflow_string([self.dep_sh], "./.airflow/dags/datablocks_dag.py")
-        # orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "./.airflow/dags/datablocks_dag.py")
+        with open(".airflow/temp/foo2.sh", "w") as f:
+            f.write("printf 'Success!' >> {0}/foo2.csv".format(self.write_dir))
 
-        # with open(".airflow/temp/foo.sh", "w") as f:
-        #     f.write("ECHO FOO\n"
-        #             "printf 'a,b,c\n1,2,3' >> foo.csv")
+        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "./.airflow/dags/datablocks_dag.py")
 
     def test_run(self):
         orchestration.run()
         import pdb; pdb.set_trace()
+        # TestDepositor success
+        assert "foo.csv" in os.listdir(os.getcwd() + "/.airflow/temp/")
+        # TestTransform success
+        assert "foo2.csv" in os.listdir(os.getcwd() + "/.airflow/temp/")
 
     def tearDown(self):
         shutil.rmtree(".airflow")
