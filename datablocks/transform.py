@@ -59,8 +59,8 @@ class Transform:
         """
         op_type = self.filename.rsplit(".")[-1]
         if op_type == "sh":
-            return """BashOperator(bash_command="{0}", task_id="{1}", dag=dag)
-    """.format(self.filename, ".".join(self.filename.rsplit(".")[:-1]))
+            return """BashOperator(bash_command="{0} ", task_id="{1}", dag=dag)
+    """.format(self.filename, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1])
 
     # def run2(self):
     #     nb = nbformat.read(self.notebook, nbformat.current_nbformat)

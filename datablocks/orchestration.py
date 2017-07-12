@@ -127,12 +127,13 @@ from datetime import datetime, timedelta
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2015, 6, 1),
     'email': ['airflow@airflow.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 1,
+    'retries': 0,
     'retry_delay': timedelta(minutes=5),
+    'start_date': datetime(2016, 1, 1),
+    'schedule_interval': '@once',
     # 'queue': 'bash_queue',
     # 'pool': 'backfill',
     # 'priority_weight': 10,
@@ -207,8 +208,10 @@ def run():
     scheduler_process = subprocess.Popen(["airflow", "scheduler"])
 
     try:
+        # subprocess.run(["airflow", "list_dags"], env=os.environ.copy(), stdout=subprocess.PIPE).stdout
+        # https://issues.apache.org/jira/browse/AIRFLOW-43
+        subprocess.call(["airflow", "unpause", "datablocks_dag"], env=os.environ.copy())
         subprocess.call(["airflow", "trigger_dag", "datablocks_dag"], env=os.environ.copy())
-        import pdb; pdb.set_trace()
     finally:
         webserver_process.kill()
         scheduler_process.kill()

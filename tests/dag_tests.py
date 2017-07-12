@@ -22,7 +22,7 @@ import unittest
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2015, 6, 1),
+    'start_date': datetime.now() + timedelta(seconds=3),
     'email': ['airflow@airflow.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -53,7 +53,8 @@ class TestRun(unittest.TestCase):
             os.mkdir(".airflow/temp")
 
         with open(".airflow/temp/foo.sh", "w") as f:
-            f.write("printf 'a,b,c\n1,2,3' >> foo.csv")
+            f.write("ECHO FOO\n"
+                    "printf 'a,b,c\n1,2,3' >> foo.csv")
 
         with open(".airflow/temp/foo2.sh", "w") as f:
             f.write("printf 'Success!' >> success.txt")
@@ -61,13 +62,8 @@ class TestRun(unittest.TestCase):
         orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "./.airflow/dags/datablocks_dag.py")
 
     def test_run(self):
-        try:
-            orchestration.run()
-        except:
-            # TODO: Continue from this point.
-            # Getting closer. The DAG is being run, but an error is getting raised due to choice-of-name. See the logs.
-            import pdb; pdb.set_trace()
-        pass
+        orchestration.run()
+        import pdb; pdb.set_trace()
 
     def tearDown(self):
         shutil.rmtree(".airflow")
