@@ -53,13 +53,18 @@ class TestRun(unittest.TestCase):
             os.mkdir(".airflow/temp")
 
         with open(".airflow/temp/foo.sh", "w") as f:
-            f.write("ECHO FOO\n"
-                    "printf 'a,b,c\n1,2,3' >> foo.csv")
+            # f.write("echo HELLO")
+            f.write("printf 'a,b,c\n1,2,3' >> ~/Desktop/foo.csv")
 
-        with open(".airflow/temp/foo2.sh", "w") as f:
-            f.write("printf 'Success!' >> success.txt")
+        # with open(".airflow/temp/foo2.sh", "w") as f:
+        #     f.write("printf 'Success!' >> success.txt")
 
-        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "./.airflow/dags/datablocks_dag.py")
+        orchestration.write_airflow_string([self.dep_sh], "./.airflow/dags/datablocks_dag.py")
+        # orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "./.airflow/dags/datablocks_dag.py")
+
+        # with open(".airflow/temp/foo.sh", "w") as f:
+        #     f.write("ECHO FOO\n"
+        #             "printf 'a,b,c\n1,2,3' >> foo.csv")
 
     def test_run(self):
         orchestration.run()

@@ -48,5 +48,8 @@ class Depositor:
         """
         op_type = self.filename.rsplit(".")[-1]
         if op_type == "sh":
-            return """BashOperator(bash_command="{0} ", task_id="{1}", dag=dag)
-    """.format(self.filename, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1])
+            with open(self.filename, 'r') as f:
+                bash_command = f.read()
+
+            return """BashOperator(bash_command=\"\"\"{0} \"\"\", task_id="{1}", dag=dag)
+    """.format(bash_command, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1])

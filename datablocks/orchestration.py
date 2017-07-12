@@ -119,6 +119,7 @@ def create_airflow_string(tasks):
     -------
     The Airflow DAG as a string, ready to be written to the file.
     """
+    # TODO: start_date corresponding with the current UTC date.
     ret_str = """
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
@@ -132,12 +133,8 @@ default_args = {
     'email_on_retry': False,
     'retries': 0,
     'retry_delay': timedelta(minutes=5),
-    'start_date': datetime(2016, 1, 1),
+    'start_date': datetime(2017, 7, 12),
     'schedule_interval': '@once',
-    # 'queue': 'bash_queue',
-    # 'pool': 'backfill',
-    # 'priority_weight': 10,
-    # 'end_date': datetime(2016, 1, 1),
 }
 
 dag = DAG('datablocks_dag', default_args=default_args, schedule_interval=timedelta(1))
@@ -215,9 +212,13 @@ def run():
         # This wait is included because otherwise the un-pause doesn't kick in before the trigger_dag command is run.
         # TODO: Improve on this.
         subprocess.call(["airflow", "trigger_dag", "datablocks_dag"], env=os.environ.copy())
+        # trigger_dag will schedule a job run and then return. If we kill the scheduler process before the return
+        # occurs, the DAG will not really run. So we need a mechanism for detecting when the DAG Run is done.
         # TODO: Improve on this.
         # import time; time.sleep(5)
     finally:
         # TODO: https://stackoverflow.com/questions/45064030/airflow-webserver-launched-via-subprocess-not-dying-on-kill
+        # Probably need to terminate the webserver by pid, using the airflow-webserver.pid file written to .airflow
+        # during a run.
         webserver_process.kill()
         scheduler_process.kill()
