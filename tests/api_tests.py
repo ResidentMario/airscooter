@@ -10,16 +10,15 @@ from datablocks import orchestration
 
 from airflow import DAG
 
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 import shutil
 import subprocess
 
 import unittest
-# import pytest
 
 
-# Default DAG arguments.
+# Sample default DAG arguments.
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -27,12 +26,7 @@ default_args = {
     'email': ['airflow@airflow.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 1,
-    'retry_delay': timedelta(minutes=5),
-    # 'queue': 'bash_queue',
-    # 'pool': 'backfill',
-    # 'priority_weight': 10,
-    # 'end_date': datetime(2016, 1, 1),
+    'retries': 0
 }
 
 
@@ -40,6 +34,23 @@ default_args = {
 def replace_once_right(string, a, b):
     i = string.rfind(a)
     return string[:i] + string[i:].replace(a, b)
+
+
+def set_up_files():
+    with open("foo.sh", "w") as f:
+        f.write("echo HELLO")
+
+    with open("foo2.sh", "w") as f:
+        f.write("echo HELLO")
+
+    with open("foo.csv", "w") as f:
+        f.write("1,2,3\n9,8,7")
+
+
+def tear_files_down():
+    os.remove("foo.sh")
+    os.remove("foo2.sh")
+    os.remove("foo.csv")
 
 
 # datafy tests.
@@ -54,6 +65,7 @@ def test_transform_datafy():
 # Shell script tests.
 class TestShellDepositor(unittest.TestCase):
     def setUp(self):
+        set_up_files()
         self.dep_sh = Depositor("TestTransform", "foo.sh", "foo.csv")
         self.dag = DAG('dag', default_args=default_args)
 
@@ -64,11 +76,15 @@ class TestShellDepositor(unittest.TestCase):
         # dag -> self.dag
         d = replace_once_right(d, "dag", "self.dag")
         bash_operator = eval(d)
-        assert bash_operator.bash_command == "foo.sh"
+        assert bash_operator.bash_command.rstrip() == "echo HELLO"
+
+    def tearDown(self):
+        tear_files_down()
 
 
 class TestShellTransform(unittest.TestCase):
     def setUp(self):
+        set_up_files()
         self.dep_sh = Depositor("TestTransform", "foo.sh", "foo.csv")
         self.trans_sh = Transform("TestTransform", "foo2.sh", "foo.csv", "foo2.csv", requirements=[self.dep_sh])
         self.dag = DAG('dag', default_args=default_args)
@@ -79,7 +95,10 @@ class TestShellTransform(unittest.TestCase):
         # dag -> self.dag
         t = replace_once_right(t, "dag", "self.dag")
         bash_t = eval(t)
-        assert bash_t.bash_command == "foo2.sh"
+        assert bash_t.bash_command == "echo HELLO "
+
+    def tearDown(self):
+        tear_files_down()
 
 
 class TestOrchestrationSerialization(unittest.TestCase):
@@ -131,11 +150,7 @@ class TestOrchestrationAirflowString(unittest.TestCase):
         if "dags" not in os.listdir(".airflow"):
             os.mkdir(".airflow/dags")
 
-        with open(".airflow/dags/foo.sh", "w") as f:
-            f.write("printf 'a,b,c\n1,2,3' >> foo.csv")
-
-        with open(".airflow/dags/foo2.sh", "w") as f:
-            f.write("echo HELLO")
+        set_up_files()
 
     def test_write(self):
         orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/datablocks_dag.py")
@@ -153,3 +168,4 @@ class TestOrchestrationAirflowString(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(".airflow")
+        tear_files_down()
