@@ -57,7 +57,7 @@ class TestRun(unittest.TestCase):
 
     def test_run(self):
         orchestration.run()
-        import pdb; pdb.set_trace()
+
         # TestDepositor success
         assert "foo.csv" in os.listdir(os.getcwd() + "/.airflow/temp/")
         # TestTransform success

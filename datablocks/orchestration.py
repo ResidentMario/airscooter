@@ -201,21 +201,93 @@ def configure(localize=True, local_folder=".airflow", init=False):
 
 
 def run():
+    # TODO: Use https://github.com/teamclairvoyant/airflow-rest-api-plugin
+
+    # # Counts extant log files. This is used for detecting when a dag run has finished.
+    # def count_logs():
+    #     try:
+    #         return len(os.listdir("./.airflow/dags/".format(os.listdir("./.airflow/logs/datablocks_dag"))))
+    #     except FileNotFoundError:
+    #         return 0
+    #
+    # if ".airflow" in os.listdir(".") and "logs" in os.listdir("./.airflow") and \
+    #                  "datablocks_dag" in os.listdir("./.airflow/logs"):
+    #     n_logs = count_logs()
+    # else:
+    #     n_logs = 0
+    #
+    # # Checks whether or not the last line of the log file indicates an exit.
+    # def log_indicates_exit():
+    #     return
+
+    def get_run_date():
+        try:
+            tasks = os.listdir("./.airflow/logs/datablocks_dag")
+        except FileNotFoundError:
+            return None
+
+        sample_task = tasks[0]
+
+        try:
+            sample_task_logs = os.listdir("./.airflow/logs/datablocks_dag/" + sample_task)
+        except FileNotFoundError:
+            return None
+
+        if len(sample_task_logs) == 0:
+            return None
+        else:
+            latest_timestamp = sorted(sample_task_logs)[-1]
+            return latest_timestamp
+
+        # status.split(b"\n")[-2]
+
     webserver_process = subprocess.Popen(["airflow", "webserver"])
     scheduler_process = subprocess.Popen(["airflow", "scheduler"])
 
     try:
-        import pdb; pdb.set_trace()
-        # subprocess.run(["airflow", "list_dags"], env=os.environ.copy(), stdout=subprocess.PIPE).stdout
-        # https://issues.apache.org/jira/browse/AIRFLOW-43
-        subprocess.call(["airflow", "unpause", "datablocks_dag"], env=os.environ.copy())
-        # This wait is included because otherwise the un-pause doesn't kick in before the trigger_dag command is run.
-        # TODO: Improve on this.
+        # Schedule a DAG run. This command schedules a run and returns; it does not wait for the (potentially
+        # threaded) process to actually complete. So we will need to wait for outputs ourselves later, before killing
+        # the process itself.
+        # See also https://issues.apache.org/jira/browse/AIRFLOW-43.
         subprocess.call(["airflow", "trigger_dag", "datablocks_dag"], env=os.environ.copy())
-        # trigger_dag will schedule a job run and then return. If we kill the scheduler process before the return
-        # occurs, the DAG will not really run. So we need a mechanism for detecting when the DAG Run is done.
-        # TODO: Improve on this.
-        # import time; time.sleep(5)
+
+        # DAGs are added to the schedule in a paused state by default. It is possible to have them added to the
+        # schedule in an unpaused state by editing the requisite config file, but I abstain from doing so in order to
+        #  keep the defaults as close to the global default as possible. Instead we'll run another CLI command for
+        # unpausing the graph.
+        #
+        # The nuance here is that the CLI returns prior to the DAG Run actually being scheduled, so unpause will have
+        # no effect in the quick sequence in which it runs. I insert a 1-second sleep here as a brute-force way of
+        # keeping this from happening.
+        # TODO: This is a hack. There's got to be a better way of handling this.
+        import time; time.sleep(1)
+        subprocess.call(["airflow", "unpause", "datablocks_dag"], env=os.environ.copy())
+    except:
+        # If an exception was raised, proceed to killing the processes.
+        pass
+    else:
+        # import pdb; pdb.set_trace()
+        import time
+        # If not, poll for the completion of the DAG run. Only continue when the deed is done.
+        run_date = None
+        while True:
+            # airflow includes a command for getting the status of a DAG run. Unfortunately this command relies on
+            # knowing the run date of the run. This is problematic for us because we trigger DAG runs whenever---we
+            # are not *truly* using the scheduler.
+            if not run_date:
+                run_date = get_run_date()
+
+            if run_date:
+                status = subprocess.run(["airflow", "dag_state", "datablocks_dag", run_date],
+                                        stdout=subprocess.PIPE).stdout
+                run_status = status.split(b"\n")[-2]  # hacky, but necessary.
+                if run_status == b'running':
+                    time.sleep(1)
+                else:
+                    break
+            else:
+                time.sleep(1)
+
     finally:
         # TODO: https://stackoverflow.com/questions/45064030/airflow-webserver-launched-via-subprocess-not-dying-on-kill
         # Probably need to terminate the webserver by pid, using the airflow-webserver.pid file written to .airflow
