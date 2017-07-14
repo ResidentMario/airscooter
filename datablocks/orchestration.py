@@ -6,6 +6,7 @@ from .transform import Transform
 from .depositor import Depositor
 import os
 import subprocess
+from datetime import datetime
 
 
 def serialize_tasks(tasks):
@@ -120,6 +121,8 @@ def create_airflow_string(tasks):
     The Airflow DAG as a string, ready to be written to the file.
     """
     # TODO: start_date corresponding with the current UTC date.
+    datetime_as_str = "".join(["datetime(", str(datetime.now().year), ", ", str(datetime.now().month), ", ",
+                               str(datetime.now().day), ")"])
     ret_str = """
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
@@ -133,12 +136,12 @@ default_args = {
     'email_on_retry': False,
     'retries': 0,
     'retry_delay': timedelta(minutes=5),
-    'start_date': datetime(2017, 7, 12),
+    'start_date': -0-,
     'schedule_interval': '@once',
 }
 
 dag = DAG('datablocks_dag', default_args=default_args, schedule_interval=timedelta(1))
-    """
+    """.replace("-0-", datetime_as_str)  # Avoids doubled-{} problems.
 
     dependencies_str = ""
 
@@ -202,23 +205,6 @@ def configure(localize=True, local_folder=".airflow", init=False):
 
 def run():
     # TODO: Use https://github.com/teamclairvoyant/airflow-rest-api-plugin
-
-    # # Counts extant log files. This is used for detecting when a dag run has finished.
-    # def count_logs():
-    #     try:
-    #         return len(os.listdir("./.airflow/dags/".format(os.listdir("./.airflow/logs/datablocks_dag"))))
-    #     except FileNotFoundError:
-    #         return 0
-    #
-    # if ".airflow" in os.listdir(".") and "logs" in os.listdir("./.airflow") and \
-    #                  "datablocks_dag" in os.listdir("./.airflow/logs"):
-    #     n_logs = count_logs()
-    # else:
-    #     n_logs = 0
-    #
-    # # Checks whether or not the last line of the log file indicates an exit.
-    # def log_indicates_exit():
-    #     return
 
     def get_run_date():
         try:
