@@ -58,9 +58,9 @@ class TestRun(unittest.TestCase):
     def test_run(self):
         orchestration.run()
 
-        # TestDepositor success
+        # TestDepositor (bash) success
         assert "foo.csv" in os.listdir(os.getcwd() + "/.airflow/temp/")
-        # TestTransform success
+        # TestTransform (bash) success
         assert "foo2.csv" in os.listdir(os.getcwd() + "/.airflow/temp/")
 
     def tearDown(self):

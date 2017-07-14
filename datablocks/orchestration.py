@@ -289,6 +289,8 @@ def run():
                 time.sleep(1)
 
     finally:
+        # TODO: Provide information on DAG run exit status.
+
         # TODO: https://stackoverflow.com/questions/45064030/airflow-webserver-launched-via-subprocess-not-dying-on-kill
         # Probably need to terminate the webserver by pid, using the airflow-webserver.pid file written to .airflow
         # during a run.
