@@ -82,7 +82,7 @@ class TestOtherOperators(unittest.TestCase):
 
         with open(self.write_dir + "foo.py", "w") as f:
             # noinspection SqlNoDataSourceInspection,SqlDialectInspection
-            f.write("""with open('{0}/foo.csv', 'w') as f: f.write('1,2,3')""".format(self.write_dir))
+            f.write("""import pandas\nwith open('{0}/foo.csv', 'w') as f: f.write('1,2,3')""".format(self.write_dir))
 
         with open(".airflow/temp/foo2.py", "w") as f:
             # noinspection SqlNoDataSourceInspection,SqlDialectInspection
