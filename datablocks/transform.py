@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 class Transform:
     """A Transform is a data manipulation task that "transforms" input data into output data."""
     def __init__(self, name, filename, input, output, requirements=None):
@@ -30,9 +33,9 @@ class Transform:
             change in the future. Defaults to an empty list (`[]`).
         """
         self.name = name
-        self.filename = filename
-        self.input = input
-        self.output = output
+        self.filename = str(Path(filename).resolve())
+        self.input = str(Path(input).resolve())
+        self.output = str(Path(output).resolve())
         self.requirements = [] if requirements is None else requirements
 
     def datafy(self):
@@ -58,6 +61,10 @@ class Transform:
         any task dependencies, which are handled separately in orchestration.
         """
         op_type = self.filename.rsplit(".")[-1]
+        # op_id = ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
+        print("\n\n{0}\n\n".format(self.filename))
+        print("\n\n{0}\n\n".format(op_type))
+
         if op_type == "sh":
             with open(self.filename, 'r') as f:
                 bash_command = f.read()
@@ -65,14 +72,24 @@ class Transform:
             return """BashOperator(bash_command=\"\"\"{0} \"\"\", task_id="{1}", dag=dag)""".format(
                 bash_command, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
             )
-
-    # def run2(self):
-    #     nb = nbformat.read(self.notebook, nbformat.current_nbformat)
-    #     # https://nbconvert.readthedocs.io/en/latest/execute_api.html
-    #     ep = nbconvert.preprocessors.ExecutePreprocessor(timeout=600, kernel_name='python3')
-    #     try:
-    #         ep.preprocess(nb, {'metadata': {'path': "/".join(self.notebook.split("/")[:-1])}})
-    #         with self.output().open('w') as f:
-    #             nbformat.write(nb, f)
-    #     except CellExecutionError:
-    #         pass
+        elif op_type == "py":
+            # Airflow provides a Python operator for executing callable Python code objects. However, this is not
+            # particularly desirable in terms of security because that would mean invoking an exec. A bash operator
+            # launching the script as a process is safer.
+            return """BashOperator(bash_command="python {0}", task_id="{1}", dag=dag)""".format(
+                self.filename, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
+            )
+        elif op_type == "ipynb":
+            pass
+            # def run2(self):
+            #     nb = nbformat.read(self.notebook, nbformat.current_nbformat)
+            #     # https://nbconvert.readthedocs.io/en/latest/execute_api.html
+            #     ep = nbconvert.preprocessors.ExecutePreprocessor(timeout=600, kernel_name='python3')
+            #     try:
+            #         ep.preprocess(nb, {'metadata': {'path': "/".join(self.notebook.split("/")[:-1])}})
+            #         with self.output().open('w') as f:
+            #             nbformat.write(nb, f)
+            #     except CellExecutionError:
+            #         pass
+        else:
+            raise NotImplementedError("The given operation type was not understood.")

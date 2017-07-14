@@ -29,15 +29,9 @@ default_args = {
 }
 
 
-class TestRun(unittest.TestCase):
+class TestBasicRun(unittest.TestCase):
+    """Tests that transforms and depositors work, and that operations of the bash type work in practice."""
     def setUp(self):
-        self.dep_sh = Depositor("TestDepositor", ".airflow/temp/foo.sh", ".airflow/temp/foo.csv")
-        self.trans_sh = Transform("TestTransform", ".airflow/temp/foo2.sh", ".airflow/temp/foo.csv",
-                                  ".airflow/temp/foo2.csv", requirements=[self.dep_sh])
-        self.dag = DAG('dag', default_args=default_args)
-
-        orchestration.configure(init=True)
-
         if ".airflow" not in os.listdir("."):
             os.mkdir(".airflow")
         if "dags" not in os.listdir(".airflow"):
@@ -53,7 +47,55 @@ class TestRun(unittest.TestCase):
         with open(".airflow/temp/foo2.sh", "w") as f:
             f.write("printf 'Success!' >> {0}/foo2.csv".format(self.write_dir))
 
+        self.dep_sh = Depositor("TestDepositor", ".airflow/temp/foo.sh", ".airflow/temp/foo.csv")
+        self.trans_sh = Transform("TestTransform", ".airflow/temp/foo2.sh", ".airflow/temp/foo.csv",
+                                  ".airflow/temp/foo2.csv", requirements=[self.dep_sh])
+        self.dag = DAG('dag', default_args=default_args)
+
+        orchestration.configure(init=True)
+
         orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "./.airflow/dags/datablocks_dag.py")
+
+    def test_run(self):
+        orchestration.run()
+
+        # TestDepositor (bash) success
+        assert "foo.csv" in os.listdir(os.getcwd() + "/.airflow/temp/")
+        # TestTransform (bash) success
+        assert "foo2.csv" in os.listdir(os.getcwd() + "/.airflow/temp/")
+
+    def tearDown(self):
+        shutil.rmtree(".airflow")
+
+
+class TestOtherOperators(unittest.TestCase):
+    """Tests non bash-type operators (.py and .ipynb for now)."""
+    def setUp(self):
+        if ".airflow" not in os.listdir("."):
+            os.mkdir(".airflow")
+        if "dags" not in os.listdir(".airflow"):
+            os.mkdir(".airflow/dags")
+        if "temp" not in os.listdir(".airflow"):
+            os.mkdir(".airflow/temp")
+
+        self.write_dir = os.getcwd() + "/.airflow/temp/"
+
+        with open(self.write_dir + "foo.py", "w") as f:
+            # noinspection SqlNoDataSourceInspection,SqlDialectInspection
+            f.write("""with open('{0}/foo.csv', 'w') as f: f.write('1,2,3')""".format(self.write_dir))
+
+        with open(".airflow/temp/foo2.py", "w") as f:
+            # noinspection SqlNoDataSourceInspection,SqlDialectInspection
+            f.write("""with open('{0}/foo2.csv', 'w') as f: f.write('1,2,3')""".format(self.write_dir))
+
+        self.py_dep_sh = Depositor("TestDepositor", ".airflow/temp/foo.py", ".airflow/temp/foo.csv")
+        self.py_trans_sh = Transform("TestTransform", ".airflow/temp/foo2.py", ".airflow/temp/foo.csv",
+                                     ".airflow/temp/foo2.csv", requirements=[self.py_dep_sh])
+        self.dag = DAG('dag', default_args=default_args)
+
+        orchestration.configure(init=True)
+
+        orchestration.write_airflow_string([self.py_dep_sh, self.py_trans_sh], "./.airflow/dags/datablocks_dag.py")
 
     def test_run(self):
         orchestration.run()
