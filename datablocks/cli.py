@@ -4,6 +4,7 @@ from .depositor import Depositor
 from .transform import Transform
 import os
 import itertools
+from pathlib import Path
 
 from ast import literal_eval
 
@@ -37,6 +38,10 @@ def link(task, inputs, outputs):
     _inputs = None if inputs is None else literal_eval(inputs) if inputs[0] == "[" else [inputs]
     task_id = task.split(".")[0]
     is_transform = inputs is not None
+
+    # Transform potential relative paths to absolute ones.
+    _outputs = [str(Path(out).resolve()) for out in _outputs]
+    _inputs = [str(Path(inp).resolve()) for inp in _inputs] if _inputs else None
 
     if is_transform:
         _task = Transform(task_id, task, _inputs, _outputs, requirements=[])

@@ -34,8 +34,8 @@ class Transform:
         """
         self.name = name
         self.filename = str(Path(filename).resolve())
-        self.input = str(Path(input).resolve())
-        self.output = str(Path(output).resolve())
+        self.input = [str(Path(inp).resolve()) for inp in input]
+        self.output = [str(Path(out).resolve()) for out in output]
         self.requirements = [] if requirements is None else requirements
 
     def datafy(self):

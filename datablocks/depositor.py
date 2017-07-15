@@ -27,7 +27,7 @@ class Depositor:
         """
         self.name = name
         self.filename = str(Path(filename).resolve())
-        self.output = str(Path(output).resolve())
+        self.output = [str(Path(out).resolve()) for out in output]
 
     def datafy(self):
         """

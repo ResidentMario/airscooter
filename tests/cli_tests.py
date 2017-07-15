@@ -7,6 +7,8 @@ from click.testing import CliRunner
 import unittest
 import shutil
 import pytest
+from pathlib import Path
+
 
 import sys; sys.path.append("../")
 from datablocks import cli, orchestration
@@ -39,7 +41,7 @@ class TestLink(unittest.TestCase):
             # https://github.com/pallets/click/issues/824#issue-241565723
             pass
         graph = orchestration.deserialize_from_file(".airflow/datablocks.yml")
-        assert "test_depositor.py" in [task.filename for task in graph]
+        assert str(Path("test_depositor.py").resolve()) in [task.filename for task in graph]
 
     @pytest.mark.run(order=4)
     def test_transform_link(self):
@@ -50,15 +52,7 @@ class TestLink(unittest.TestCase):
         except ValueError:
             pass
         graph = orchestration.deserialize_from_file(".airflow/datablocks.yml")
-        assert "test_transform.py" in [task.filename for task in graph]
-
-
-class TestRun(unittest.TestCase):
-    # At this point we have created a DAG with a depositor job that creates bar.txt, and a DAG with a transform job
-    # that goes bar.txt --> bar2.txt. To test running our DAG, let's set these up as real entities.
-
-    def setUp(self):
-        pass
+        assert str(Path("test_transform.py").resolve()) in [task.filename for task in graph]
 
 
 @pytest.mark.run(order=5)
