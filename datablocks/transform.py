@@ -80,16 +80,9 @@ class Transform:
                 self.filename, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
             )
         elif op_type == "ipynb":
-            pass
-            # def run2(self):
-            #     nb = nbformat.read(self.notebook, nbformat.current_nbformat)
-            #     # https://nbconvert.readthedocs.io/en/latest/execute_api.html
-            #     ep = nbconvert.preprocessors.ExecutePreprocessor(timeout=600, kernel_name='python3')
-            #     try:
-            #         ep.preprocess(nb, {'metadata': {'path': "/".join(self.notebook.split("/")[:-1])}})
-            #         with self.output().open('w') as f:
-            #             nbformat.write(nb, f)
-            #     except CellExecutionError:
-            #         pass
+            return """BashOperator(bash_command="jupyter nbconvert --to notebook""" + \
+                   """ --execute {0}", task_id="{1}", dag=dag)""".format(
+                       self.filename, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
+                   )
         else:
             raise NotImplementedError("The given operation type was not understood.")
