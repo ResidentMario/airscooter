@@ -81,8 +81,14 @@ def link(task, inputs, outputs, dummy):
 
 
 @click.command()
-def run():
-    orchestrate_run()
+@click.argument('starting_task', required=False, help="The starting point for the task, if a subgraph run is desired.")
+def run(starting_task):
+    click.echo(starting_task)
+
+    if starting_task:
+        pass
+
+    orchestrate_run(starting_task)
 
 
 cli.add_command(init)

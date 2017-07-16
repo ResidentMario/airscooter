@@ -205,8 +205,19 @@ def configure(localize=True, local_folder=".airflow", init=False):
         subprocess.call(["airflow", "initdb"], env=os.environ.copy())  # resetdb?
 
 
-def run():
+def run(starting_task=None):
+    """
+    Runs a DAG.
+
+    Parameters
+    ----------
+    starting_task, str or None, default None
+        If this parameter is not None, run the DAG starting from the task thus named.
+    """
     # TODO: Use https://github.com/teamclairvoyant/airflow-rest-api-plugin
+    if starting_task is not None:
+        # TODO: Implement subgraph runs. This is not easy, and requires in-place modification!
+        raise NotImplementedError("Subgraph runs have not been implemented yet.")
 
     def get_run_date():
         try:
