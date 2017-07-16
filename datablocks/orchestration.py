@@ -205,19 +205,54 @@ def configure(localize=True, local_folder=".airflow", init=False):
         subprocess.call(["airflow", "initdb"], env=os.environ.copy())  # resetdb?
 
 
-def run(starting_task=None):
+def run():  # pin=None, run_mode=None
     """
     Runs a DAG.
 
     Parameters
     ----------
-    starting_task, str or None, default None
-        If this parameter is not None, run the DAG starting from the task thus named.
+    pin, str or None, default None
+        If this parameter is None, run the task with this name in the mode set by the run_mode parameter.
+    run_mode, {'forward', 'backwards', 'all'}, default None
+        If `pin` is None, do nothing. Otherwise, do the following. If set to 'forward', run this task and all tasks
+        that come after it, stubbing out any unfulfilled requirements with dummy operators. If set to 'backwards',
+        run this task and any tasks that come before, again with stubs. If set to 'all', run all dependent and
+        expectant tasks, again with stubs. In this case, if this parameter is left as None, raises a ValueError.
     """
     # TODO: Use https://github.com/teamclairvoyant/airflow-rest-api-plugin
-    if starting_task is not None:
-        # TODO: Implement subgraph runs. This is not easy, and requires in-place modification!
-        raise NotImplementedError("Subgraph runs have not been implemented yet.")
+    # if pin is not None:
+    #     # TODO: Implement subgraph runs.
+    #     # Stash the current YML.
+    #     current_graph = deserialize_from_file("./.airflow/datablocks_dag.yml")
+    #
+    #     if run_mode is None or run_mode not in {'forward', 'backwards', 'all'}:
+    #         raise ValueError("A pinned task was passed without a valid run mode specified.")
+    #
+    #     # Identify which tasks in the graph do not need to be run because they do not come after the chosen starting
+    #     # task.
+    #     def compute_forward_subgraph(task, subgraph_tasks):
+    #         additional_tasks = {next_task for next_task in current_graph if next_task in task.requirements}
+    #         subgraph_tasks.update(additional_tasks)
+    #
+    #         for next_task in additional_tasks:
+    #             subgraph_tasks = compute_forward_subgraph(next_task, subgraph_tasks)
+    #
+    #         return subgraph_tasks
+    #
+    #     starting_task = next(task for task in current_graph if task.name == pin)
+    #
+    #     if run_mode == 'forward':
+    #         subgraph = compute_forward_subgraph(starting_task, {starting_task})
+    #     elif run_mode == 'backwards':
+    #         raise NotImplementedError("Backwards-facing pinned runs have not been implemented yet.")
+    #     else:  # run_mode == "all"
+    #         raise NotImplementedError("Bidirectional pinned runs have not been implemented yet.")
+    #
+    #     # Create dummies for the co-dependent tasks.
+    #
+    #     # Pop the current YML back into place.
+    #     serialize_to_file(current_graph, './.airflow/datablocks_dag.yml')
+    #     # raise NotImplementedError("Subgraph runs have not been implemented yet.")
 
     def get_run_date():
         try:
@@ -237,8 +272,6 @@ def run(starting_task=None):
         else:
             latest_timestamp = sorted(sample_task_logs)[-1]
             return latest_timestamp
-
-        # status.split(b"\n")[-2]
 
     webserver_process = subprocess.Popen(["airflow", "webserver"])
     scheduler_process = subprocess.Popen(["airflow", "scheduler"])
