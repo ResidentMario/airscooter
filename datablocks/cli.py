@@ -1,5 +1,6 @@
 import click
-from .orchestration import *
+from .orchestration import configure, deserialize_from_file, serialize_to_file
+from .orchestration import run as orchestrate_run
 from .depositor import Depositor
 from .transform import Transform
 import os
@@ -78,6 +79,13 @@ def link(task, inputs, outputs, dummy):
     click.echo(task + "\n" + str(inputs) + "\n" + str(outputs))
     click.echo(_task)
 
+
+@click.command()
+def run():
+    orchestrate_run()
+
+
 cli.add_command(init)
 cli.add_command(reset)
 cli.add_command(link)
+cli.add_command(run)
