@@ -4,3 +4,4 @@ notebooks/.ipynb_checkpoints
 */__pycache__/
 datablocks.egg-info/
 .airflow
+tests/fixtures/.ipynb_checkpoints/
