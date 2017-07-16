@@ -68,7 +68,8 @@ def deserialize(yml_data):
             task = Depositor(
                 task_repr['name'],
                 task_repr['filename'],
-                task_repr['output']
+                task_repr['output'],
+                dummy=task_repr['dummy']
             )
         else:
             task = Transform(
@@ -126,6 +127,7 @@ def create_airflow_string(tasks):
     ret_str = """
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
+from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
 
 default_args = {
@@ -252,7 +254,7 @@ def run():
         # If an exception was raised, proceed to killing the processes.
         pass
     else:
-        # import pdb; pdb.set_trace()
+        # TODO: This could be improved by manipulating airflow's internal API somehow, instead of beating on the CLI.
         import time
         # If not, poll for the completion of the DAG run. Only continue when the deed is done.
         run_date = None

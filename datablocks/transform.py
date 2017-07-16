@@ -3,7 +3,7 @@ from pathlib import Path
 
 class Transform:
     """A Transform is a data manipulation task that "transforms" input data into output data."""
-    def __init__(self, name, filename, input, output, requirements=None):
+    def __init__(self, name, filename, input, output, requirements=None, dummy=False):
         """
         Parameters
         ----------
@@ -31,12 +31,17 @@ class Transform:
         requirements: list of {Transform, Depositor} objects, optional
             A list of requirements for this task. At the moment, multiple requirements are possible, but this may
             change in the future. Defaults to an empty list (`[]`).
+        dummy: bool, default False
+            Whether or not the op is a dummy operator (no-op). A dummy operator will be executed as a `DummyOperator`
+            by airflow at runtime. This parameter is used for dealing with potentially long-running processes that
+            you might want to trigger externally.
         """
         self.name = name
         self.filename = str(Path(filename).resolve())
         self.input = [str(Path(inp).resolve()) for inp in input]
         self.output = [str(Path(out).resolve()) for out in output]
         self.requirements = [] if requirements is None else requirements
+        self.dummy = dummy
 
     def datafy(self):
         """
@@ -50,7 +55,8 @@ class Transform:
                 'input': self.input,
                 'output': self.output,
                 'requirements': [r.name for r in self.requirements],
-                'type': 'transform'}
+                'type': 'transform',
+                'dummy': self.dummy}
 
     def as_airflow_string(self):
         """
@@ -62,10 +68,14 @@ class Transform:
         """
         op_type = self.filename.rsplit(".")[-1]
         # op_id = ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
-        print("\n\n{0}\n\n".format(self.filename))
-        print("\n\n{0}\n\n".format(op_type))
+        # print("\n\n{0}\n\n".format(self.filename))
+        # print("\n\n{0}\n\n".format(op_type))
 
-        if op_type == "sh":
+        if self.dummy:
+            return """DummyOperator(task_id="{0}", dag=dag)""".format(
+                ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
+            )
+        elif op_type == "sh":
             with open(self.filename, 'r') as f:
                 bash_command = f.read()
 
@@ -83,6 +93,6 @@ class Transform:
             return """BashOperator(bash_command="jupyter nbconvert --to notebook""" + \
                    """ --execute {0}", task_id="{1}", dag=dag)""".format(
                        self.filename, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
-                   )
+            )
         else:
             raise NotImplementedError("The given operation type was not understood.")

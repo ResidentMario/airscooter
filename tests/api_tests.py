@@ -169,3 +169,27 @@ class TestOrchestrationAirflowString(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(".airflow")
         tear_files_down()
+
+
+class TestOrchestrationWithDummies(unittest.TestCase):
+    def setUp(self):
+        self.dep_sh = Depositor("TestDepositor", "foo.sh", "foo.csv", dummy=True)
+        self.trans_sh = Transform("TestTransform", "foo2.sh", "foo.csv", "foo2.csv",
+                                  requirements=[self.dep_sh], dummy=True)
+        self.dag = DAG('dag', default_args=default_args)
+
+        if ".airflow" not in os.listdir("."):
+            os.mkdir(".airflow")
+        if "dags" not in os.listdir(".airflow"):
+            os.mkdir(".airflow/dags")
+
+        set_up_files()
+
+    def test_write(self):
+        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/datablocks_dag.py")
+        import pdb; pdb.set_trace()
+        assert "datablocks_dag.py" in os.listdir(".airflow/dags/")
+
+    def tearDown(self):
+        shutil.rmtree(".airflow")
+        tear_files_down()

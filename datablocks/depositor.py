@@ -6,7 +6,7 @@ class Depositor:
     A Depositor is (ontologically) a data dumping task that takes data from somewhere and places it onto the local
     machine.
     """
-    def __init__(self, name, filename, output):
+    def __init__(self, name, filename, output, dummy=False):
         """
         Parameters
         ----------
@@ -24,10 +24,15 @@ class Depositor:
         output: str, required
             The filename of the file that is being generated as output to this task. This parameter is used at the
             CLI level to determine prerequisites for possible further transforms dependent on this one.
+        dummy: bool, default False
+            Whether or not the op is a dummy operator (no-op). A dummy operator will be executed as a `DummyOperator`
+            by airflow at runtime. This parameter is used for dealing with potentially long-running processes that
+            you might want to trigger externally.
         """
         self.name = name
         self.filename = str(Path(filename).resolve())
         self.output = [str(Path(out).resolve()) for out in output]
+        self.dummy = dummy
 
     def datafy(self):
         """
@@ -39,7 +44,8 @@ class Depositor:
         return {'name': self.name,
                 'filename': self.filename,
                 'output': self.output,
-                'type': 'depositor'}
+                'type': 'depositor',
+                'dummy': self.dummy}
 
     def as_airflow_string(self):
         """
@@ -51,10 +57,14 @@ class Depositor:
         """
         op_type = self.filename.rsplit(".")[-1]
         # op_id = ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
-        print("\n\n{0}\n\n".format(self.filename))
-        print("\n\n{0}\n\n".format(op_type))
+        # print("\n\n{0}\n\n".format(self.filename))
+        # print("\n\n{0}\n\n".format(op_type))
 
-        if op_type == "sh":
+        if self.dummy:
+            return """DummyOperator(task_id="{0}", dag=dag)""".format(
+                ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
+            )
+        elif op_type == "sh":
             with open(self.filename, 'r') as f:
                 bash_command = f.read()
 
