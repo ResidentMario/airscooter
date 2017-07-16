@@ -30,7 +30,8 @@ def reset():
 @click.argument('task')
 @click.option('--inputs', help='A filename or list of filenames for data being inputted.')
 @click.option('--outputs', help='A filename or list of filenames for data being outputted.')
-def link(task, inputs, outputs):
+@click.option('--dummy/--no-dummy', default=False, help='Initialize the new task as a no-op dummy.')
+def link(task, inputs, outputs, dummy):
     if outputs is None:
         raise ValueError("No output filenames provided.")
 
@@ -38,16 +39,16 @@ def link(task, inputs, outputs):
     _inputs = None if inputs is None else literal_eval(inputs) if inputs[0] == "[" else [inputs]
     task_id = task.split(".")[0]
     is_transform = inputs is not None
+    is_dummy = dummy is not None
 
     # Transform potential relative paths to absolute ones.
     _outputs = [str(Path(out).resolve()) for out in _outputs]
     _inputs = [str(Path(inp).resolve()) for inp in _inputs] if _inputs else None
 
     if is_transform:
-        _task = Transform(task_id, task, _inputs, _outputs, requirements=[])
-    else:
-        # must be a depositor then
-        _task = Depositor(task_id, task, _outputs)
+        _task = Transform(task_id, task, _inputs, _outputs, requirements=[], dummy=is_dummy)
+    else:  # is_depositor
+        _task = Depositor(task_id, task, _outputs, dummy=is_dummy)
 
     if "datablocks.yml" not in os.listdir(".airflow"):
         graph = []

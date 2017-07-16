@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='datablocks',
     version='0.0.1',
-    install_requires=['airflow', 'pyaml', 'click'],
+    install_requires=['apache-airflow', 'pyaml', 'click'],
     packages=find_packages(),
     include_package_data=True,
     entry_points='''

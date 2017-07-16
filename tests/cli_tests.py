@@ -54,8 +54,23 @@ class TestLink(unittest.TestCase):
         graph = orchestration.deserialize_from_file(".airflow/datablocks.yml")
         assert str(Path("test_transform.py").resolve()) in [task.filename for task in graph]
 
+    @pytest.mark.run(order=5)
+    def test_dummy_links(self):
 
-@pytest.mark.run(order=5)
+        try:
+            result = runner.invoke(cli.link, ["test_dummy_depositor.py", "--outputs", "['bar3.txt']", "--dummy"])
+            assert result.exit_code == 0
+            result = runner.invoke(cli.link, ["test_dummy_transform.py", "--inputs", "['bar3.txt']",
+                                              "--outputs", "['bar4.txt']", "--dummy"])
+            assert result.exit_code == 0
+        except ValueError:
+            pass
+
+        graph = orchestration.deserialize_from_file(".airflow/datablocks.yml")
+        assert str(Path("test_depositor.py").resolve()) in [task.filename for task in graph]
+
+
+@pytest.mark.run(order=6)
 def test_tear_down():
     # tearDown has to be done here, because a unittest tearDown in TestLink can surprisingly can run before the tests
     # finish. This is likely a bug with pytest-ordering.
