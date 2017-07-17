@@ -187,7 +187,6 @@ class TestOrchestrationWithDummies(unittest.TestCase):
 
     def test_write(self):
         orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/airscooter_dag.py")
-        import pdb; pdb.set_trace()
         assert "airscooter_dag.py" in os.listdir(".airflow/dags/")
 
     def tearDown(self):

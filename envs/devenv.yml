@@ -7,7 +7,6 @@ dependencies:
   - pytest
   - pip:
     - apache-airflow
-    - prompt_toolkit
     - pyyaml
     - click
     - pytest-ordering

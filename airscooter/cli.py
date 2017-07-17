@@ -81,7 +81,7 @@ def link(task, inputs, outputs, dummy):
 
 
 @click.command()
-@click.argument('starting_task', required=False, help="The starting point for the task, if a subgraph run is desired.")
+@click.argument('starting_task', required=False)
 def run(starting_task):
     click.echo(starting_task)
 
