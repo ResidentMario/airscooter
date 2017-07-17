@@ -1,11 +1,11 @@
 """
-Tests datablocks-enabled airflow DAG runs.
+Tests airscooter-enabled airflow DAG runs.
 """
 
 import sys; sys.path.append("../")
-from datablocks.depositor import Depositor
-from datablocks.transform import Transform
-from datablocks import orchestration
+from airscooter.depositor import Depositor
+from airscooter.transform import Transform
+from airscooter import orchestration
 
 from airflow import DAG
 
@@ -54,7 +54,7 @@ class TestBasicRun(unittest.TestCase):
 
         orchestration.configure(init=True)
 
-        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "./.airflow/dags/datablocks_dag.py")
+        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], "./.airflow/dags/airscooter_dag.py")
 
     def test_run(self):
         orchestration.run()
@@ -104,7 +104,7 @@ class TestOtherOperators(unittest.TestCase):
         orchestration.configure(init=True)
 
         orchestration.write_airflow_string([self.py_dep_sh, self.py_trans_sh, self.ipynb_trans_sh],
-                                           "./.airflow/dags/datablocks_dag.py")
+                                           "./.airflow/dags/airscooter_dag.py")
 
     def test_run(self):
         orchestration.run()

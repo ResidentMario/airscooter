@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 import sys; sys.path.append("../")
-from datablocks import cli, orchestration
+from airscooter import cli, orchestration
 
 
 runner = CliRunner()
@@ -40,7 +40,7 @@ class TestLink(unittest.TestCase):
         except ValueError:
             # https://github.com/pallets/click/issues/824#issue-241565723
             pass
-        graph = orchestration.deserialize_from_file(".airflow/datablocks.yml")
+        graph = orchestration.deserialize_from_file(".airflow/airscooter.yml")
         assert str(Path("test_depositor.py").resolve()) in [task.filename for task in graph]
 
     @pytest.mark.run(order=4)
@@ -51,7 +51,7 @@ class TestLink(unittest.TestCase):
             assert result.exit_code == 0
         except ValueError:
             pass
-        graph = orchestration.deserialize_from_file(".airflow/datablocks.yml")
+        graph = orchestration.deserialize_from_file(".airflow/airscooter.yml")
         assert str(Path("test_transform.py").resolve()) in [task.filename for task in graph]
 
     @pytest.mark.run(order=5)
@@ -66,7 +66,7 @@ class TestLink(unittest.TestCase):
         except ValueError:
             pass
 
-        graph = orchestration.deserialize_from_file(".airflow/datablocks.yml")
+        graph = orchestration.deserialize_from_file(".airflow/airscooter.yml")
         assert str(Path("test_depositor.py").resolve()) in [task.filename for task in graph]
 
 

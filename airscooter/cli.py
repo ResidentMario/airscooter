@@ -51,10 +51,10 @@ def link(task, inputs, outputs, dummy):
     else:  # is_depositor
         _task = Depositor(task_id, task, _outputs, dummy=is_dummy)
 
-    if "datablocks.yml" not in os.listdir(".airflow"):
+    if "airscooter.yml" not in os.listdir(".airflow"):
         graph = []
     else:
-        graph = deserialize_from_file("./.airflow/datablocks.yml")
+        graph = deserialize_from_file("./.airflow/airscooter.yml")
 
     # Before writing to file, check to make sure that this task is not already in the graph.
     if _task.name not in [task.name for task in graph]:
@@ -74,7 +74,7 @@ def link(task, inputs, outputs, dummy):
     else:
         raise ValueError("The given script is already included in the task graph.")
 
-    serialize_to_file(graph, "./.airflow/datablocks.yml")
+    serialize_to_file(graph, "./.airflow/airscooter.yml")
 
     click.echo(task + "\n" + str(inputs) + "\n" + str(outputs))
     click.echo(_task)

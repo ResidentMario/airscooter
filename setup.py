@@ -1,20 +1,20 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='datablocks',
+    name='airscooter',
     version='0.0.1',
     install_requires=['apache-airflow', 'pyaml', 'click'],
     packages=find_packages(),
     include_package_data=True,
     entry_points='''
         [console_scripts]
-        datablocks=datablocks.cli:cli
+        airscooter=airscooter.cli:cli
     ''',
     description='Simple data processing task graph manager for Python.',
     author='Aleksey Bilogur',
     author_email='aleksey.bilogur@gmail.com',
-    url='https://github.com/ResidentMario/datablocks',
-    download_url='https://github.com/ResidentMario/datablocks/tarball/0.0.1',
+    url='https://github.com/ResidentMario/airscooter',
+    download_url='https://github.com/ResidentMario/airscooter/tarball/0.0.1',
     keywords=['data', 'data analysis', 'data science', 'task graph'],
     classifiers=[]
 )

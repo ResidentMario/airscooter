@@ -4,9 +4,9 @@ difficult-to-test, see `dag_tests.py`) is tested here.
 """
 
 import sys; sys.path.append("../")
-from datablocks.depositor import Depositor
-from datablocks.transform import Transform
-from datablocks import orchestration
+from airscooter.depositor import Depositor
+from airscooter.transform import Transform
+from airscooter import orchestration
 
 from airflow import DAG
 
@@ -153,17 +153,17 @@ class TestOrchestrationAirflowString(unittest.TestCase):
         set_up_files()
 
     def test_write(self):
-        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/datablocks_dag.py")
-        assert "datablocks_dag.py" in os.listdir(".airflow/dags/")
+        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/airscooter_dag.py")
+        assert "airscooter_dag.py" in os.listdir(".airflow/dags/")
 
     def test_write_airflow_availability(self):
         if 'AIRFLOW_HOME' not in os.environ:
             orchestration.configure()
 
-        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/datablocks_dag.py")
+        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/airscooter_dag.py")
         # Note: subprocess.run is Python 3.5+.
         result = subprocess.run(["airflow", "list_dags"], env=os.environ.copy(), stdout=subprocess.PIPE).stdout
-        expected = b"datablocks_dag"
+        expected = b"airscooter_dag"
         assert expected in result
 
     def tearDown(self):
@@ -186,9 +186,9 @@ class TestOrchestrationWithDummies(unittest.TestCase):
         set_up_files()
 
     def test_write(self):
-        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/datablocks_dag.py")
+        orchestration.write_airflow_string([self.dep_sh, self.trans_sh], ".airflow/dags/airscooter_dag.py")
         import pdb; pdb.set_trace()
-        assert "datablocks_dag.py" in os.listdir(".airflow/dags/")
+        assert "airscooter_dag.py" in os.listdir(".airflow/dags/")
 
     def tearDown(self):
         shutil.rmtree(".airflow")

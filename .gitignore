@@ -5,3 +5,4 @@ notebooks/.ipynb_checkpoints
 datablocks.egg-info/
 .airflow
 tests/fixtures/.ipynb_checkpoints/
+airscooter.egg-info/

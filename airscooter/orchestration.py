@@ -49,7 +49,7 @@ def serialize_to_file(tasks, yml_filename):
 
 def deserialize(yml_data):
     """
-    Given a task graph YAML serialization, returns the list of datablocks objects (Transform and Depositor objects)
+    Given a task graph YAML serialization, returns the list of airscooter objects (Transform and Depositor objects)
     making up this task graph.
 
     Parameters
@@ -59,7 +59,7 @@ def deserialize(yml_data):
 
     Returns
     -------
-    The resultant datablocks task list.
+    The resultant airscooter task list.
     """
     hash_table = dict()
     tasks = []
@@ -90,7 +90,7 @@ def deserialize(yml_data):
 
 def deserialize_from_file(yml_filename):
     """
-    Given a task graph YAML serialization, returns the constituent list of datablocks task graph objects. I/O wrapper
+    Given a task graph YAML serialization, returns the constituent list of airscooter task graph objects. I/O wrapper
     for `deserialize`.
 
     Parameters
@@ -100,7 +100,7 @@ def deserialize_from_file(yml_filename):
 
     Returns
     -------
-    The resultant datablocks task list.
+    The resultant airscooter task list.
     """
     with open(yml_filename, "r") as f:
         yml_data = yaml.load(f.read())
@@ -142,7 +142,7 @@ default_args = {
     'schedule_interval': '@once',
 }
 
-dag = DAG('datablocks_dag', default_args=default_args, schedule_interval=timedelta(1))
+dag = DAG('airscooter_dag', default_args=default_args, schedule_interval=timedelta(1))
     """.replace("-0-", datetime_as_str)  # Avoids doubled-{} problems.
 
     dependencies_str = ""
@@ -176,7 +176,7 @@ def write_airflow_string(tasks, filename):
 
 def configure(localize=True, local_folder=".airflow", init=False):
     """
-    Configures Airflow for use within Datablocks.
+    Configures Airflow for use within Airscooter.
 
     Parameters
     ----------
@@ -186,10 +186,10 @@ def configure(localize=True, local_folder=".airflow", init=False):
         machine, with each DAG corresponding with a single directory, and thus a single project or git repository
         thereof.
 
-        If localize is set to False, datablocks will inherit the current global Airflow settings. This is the vanilla
+        If localize is set to False, airscooter will inherit the current global Airflow settings. This is the vanilla
         behavior, and may be preferable in advanced circumstances (which ones TBD).
     local_folder: str, default ".airflow"
-        The name of the local folder that the DAG gets written to. Datablocks configures Airflow to work against this
+        The name of the local folder that the DAG gets written to. Airscooter configures Airflow to work against this
         folder.
     init: bool, default False
         Whether or not to initialize the database.
@@ -223,7 +223,7 @@ def run():  # pin=None, run_mode=None
     # if pin is not None:
     #     # TODO: Implement subgraph runs.
     #     # Stash the current YML.
-    #     current_graph = deserialize_from_file("./.airflow/datablocks_dag.yml")
+    #     current_graph = deserialize_from_file("./.airflow/airscooter.yml")
     #
     #     if run_mode is None or run_mode not in {'forward', 'backwards', 'all'}:
     #         raise ValueError("A pinned task was passed without a valid run mode specified.")
@@ -251,19 +251,19 @@ def run():  # pin=None, run_mode=None
     #     # Create dummies for the co-dependent tasks.
     #
     #     # Pop the current YML back into place.
-    #     serialize_to_file(current_graph, './.airflow/datablocks_dag.yml')
+    #     serialize_to_file(current_graph, './.airflow/airscooter.yml')
     #     # raise NotImplementedError("Subgraph runs have not been implemented yet.")
 
     def get_run_date():
         try:
-            tasks = os.listdir("./.airflow/logs/datablocks_dag")
+            tasks = os.listdir("./.airflow/logs/airscooter_dag")
         except FileNotFoundError:
             return None
 
         sample_task = tasks[0]
 
         try:
-            sample_task_logs = os.listdir("./.airflow/logs/datablocks_dag/" + sample_task)
+            sample_task_logs = os.listdir("./.airflow/logs/airscooter_dag/" + sample_task)
         except FileNotFoundError:
             return None
 
@@ -281,7 +281,7 @@ def run():  # pin=None, run_mode=None
         # threaded) process to actually complete. So we will need to wait for outputs ourselves later, before killing
         # the process itself.
         # See also https://issues.apache.org/jira/browse/AIRFLOW-43.
-        subprocess.call(["airflow", "trigger_dag", "datablocks_dag"], env=os.environ.copy())
+        subprocess.call(["airflow", "trigger_dag", "airscooter_dag"], env=os.environ.copy())
 
         # DAGs are added to the schedule in a paused state by default. It is possible to have them added to the
         # schedule in an unpaused state by editing the requisite config file, but I abstain from doing so in order to
@@ -293,7 +293,7 @@ def run():  # pin=None, run_mode=None
         # keeping this from happening.
         # TODO: This is a hack. There's got to be a better way of handling this.
         import time; time.sleep(1)
-        subprocess.call(["airflow", "unpause", "datablocks_dag"], env=os.environ.copy())
+        subprocess.call(["airflow", "unpause", "airscooter_dag"], env=os.environ.copy())
     except:
         # If an exception was raised, proceed to killing the processes.
         pass
@@ -310,7 +310,7 @@ def run():  # pin=None, run_mode=None
                 run_date = get_run_date()
 
             if run_date:
-                status = subprocess.run(["airflow", "dag_state", "datablocks_dag", run_date],
+                status = subprocess.run(["airflow", "dag_state", "airscooter_dag", run_date],
                                         stdout=subprocess.PIPE).stdout
                 run_status = status.split(b"\n")[-2]  # hacky, but necessary.
                 if run_status == b'running':
