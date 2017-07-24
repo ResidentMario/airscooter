@@ -88,6 +88,7 @@ def run(starting_task):
     if starting_task:
         raise NotImplementedError("Subgraph runs has not been implemented yet.")
 
+    configure(init=False)
     orchestrate_run()
 
 
