@@ -37,9 +37,9 @@ class Transform:
             you might want to trigger externally.
         """
         self.name = name
-        self.filename = str(Path(filename).resolve())
-        self.input = [str(Path(inp).resolve()) for inp in input]
-        self.output = [str(Path(out).resolve()) for out in output]
+        self.filename = str(Path(filename).resolve(strict=False))
+        self.input = [str(Path(inp).resolve(strict=False)) for inp in input]
+        self.output = [str(Path(out).resolve(strict=False)) for out in output]
         self.requirements = [] if requirements is None else requirements
         self.dummy = dummy
 

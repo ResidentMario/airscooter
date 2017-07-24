@@ -30,8 +30,8 @@ class Depositor:
             you might want to trigger externally.
         """
         self.name = name
-        self.filename = str(Path(filename).resolve())
-        self.output = [str(Path(out).resolve()) for out in output]
+        self.filename = str(Path(filename).resolve(strict=False))
+        self.output = [str(Path(out).resolve(strict=False)) for out in output]
         self.dummy = dummy
 
     def datafy(self):
