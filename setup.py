@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='airscooter',
     version='0.0.1',
-    install_requires=['apache-airflow', 'pyaml', 'click'],
+    install_requires=['apache-airflow', 'pyaml', 'click', 'click-plugins'],
     packages=find_packages(),
     include_package_data=True,
     entry_points='''

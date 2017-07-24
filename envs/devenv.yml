@@ -1,12 +1,9 @@
 name: urban-physiology
 dependencies:
-  - pandas
-  - jupyter
-  - requests
-  - nbformat
   - pytest
   - pip:
     - apache-airflow
     - pyyaml
     - click
+    - click-plugins
     - pytest-ordering

@@ -7,9 +7,13 @@ import os
 import itertools
 from pathlib import Path
 
+from pkg_resources import iter_entry_points
+from click_plugins import with_plugins
+
 from ast import literal_eval
 
 
+@with_plugins(iter_entry_points('core_package.cli_plugins'))
 @click.group()
 def cli():
     pass
