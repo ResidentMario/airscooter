@@ -196,7 +196,6 @@ def configure(localize=True, local_folder=".airflow", init=False):
     """
     if localize:
         os.environ['AIRFLOW_HOME'] = os.path.abspath("./.airflow")
-        print(os.path.abspath("./.airflow"))
         dag_folder_path = "./{0}".format(local_folder)
         if not os.path.isdir("./.airflow"):
             os.mkdir(dag_folder_path)
