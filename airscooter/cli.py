@@ -86,9 +86,9 @@ def run(starting_task):
     click.echo(starting_task)
 
     if starting_task:
-        pass
+        raise NotImplementedError("Subgraph runs has not been implemented yet.")
 
-    orchestrate_run(starting_task)
+    orchestrate_run()
 
 
 cli.add_command(init)
