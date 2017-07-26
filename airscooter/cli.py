@@ -87,13 +87,15 @@ def link(task, inputs, outputs, dummy):
 @click.command()
 @click.argument('starting_task', required=False)
 def run(starting_task):
-    click.echo(starting_task)
 
     if starting_task:
         raise NotImplementedError("Subgraph runs has not been implemented yet.")
 
     configure(init=False)
     orchestrate_run()
+
+    click.echo('\n\nThe run has ended. Visit localhost:8080 in your web browser to see the DAG Run results.')
+    # TODO: Figure out how to terminate the webserver on Ctrl+C without a sudo fuser. With if must.
 
 
 cli.add_command(init)
