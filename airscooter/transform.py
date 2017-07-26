@@ -92,7 +92,7 @@ class Transform:
         elif op_type == "ipynb":
             return """BashOperator(bash_command="jupyter nbconvert --to notebook""" + \
                    """ --execute {0}", task_id="{1}", dag=dag)""".format(
-                       self.filename, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
+                       self.filename, self.name
             )
         else:
             raise NotImplementedError("The given operation type was not understood.")
