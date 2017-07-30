@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # airscooter documentation build configuration file, created by
-# sphinx-quickstart on Sat Jul 29 23:31:46 2017.
+# sphinx-quickstart on Sat Jul 29 23:50:40 2017.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -32,8 +32,6 @@
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages']
 
@@ -51,8 +49,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'airscooter'
-copyright = '2017, Aleksey Bilogur'
-author = 'Aleksey Bilogur'
+copyright = '2017, ResidentMario'
+author = 'ResidentMario'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -73,7 +71,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -147,7 +145,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'airscooter.tex', 'airscooter Documentation',
-     'Aleksey Bilogur', 'manual'),
+     'ResidentMario', 'manual'),
 ]
 
 
