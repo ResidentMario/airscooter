@@ -1,9 +1,0 @@
-name: urban-physiology
-dependencies:
-  - pytest
-  - pip:
-    - apache-airflow
-    - pyyaml
-    - click
-    - click-plugins
-    - pytest-ordering
