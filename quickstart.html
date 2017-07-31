@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quickstart &mdash; airscooter 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="airscooter 0.0.1 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> airscooter
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Quickstart</a><ul>
+<li><a class="reference internal" href="#motivation">Motivation</a></li>
+<li><a class="reference internal" href="#use-case">Use Case</a></li>
+<li><a class="reference internal" href="#why">Why</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">airscooter</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Quickstart</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>Data distributed via the web can do so in any of a number of different “packaging format”. We may find that the
+traffic estimates that we need for one project are wrapped up inside of a formatted Excel file, or that the
+archived feed data that we need for another project is delivered in the form of a packet of files inside of a
+compressed ZIP files.</p>
+<p>These shreds of data are hopefully relatively easy for you, the project author, to clean up and refactor into the
+form you need them to be in. But for anyone else reading your code, this imposes the mental overhead of
+understanding <em>what</em> it is, exactly, that they need to do to get that data properly marshaled themselves.</p>
+<p>But what if you work with colleagues or collaborators or copycats who want to get your project running themselves? Or,
+better yet, what if you come back to this project again a few months from now. Will you remember what piece of data
+engineering goes where? I doubt it.</p>
+<p><code class="docutils literal"><span class="pre">airscooter</span></code> foolproofs simple data processing pipelines. It does this by boling data fetches down to a single
+terminal command.</p>
+</div>
+<div class="section" id="use-case">
+<h2>Use Case<a class="headerlink" href="#use-case" title="Permalink to this headline">¶</a></h2>
+<p>To learn more, let’s step through a use case.</p>
+<p>Suppose that you’re an analyst at a traffic planning consulting firm. You’ve been hired by the city of New York to
+help plan rolling out additional bike lines around the lower Manhattan region. As consultants are wont to do, you are
+writing a report that you hope will present a thoughtful data-driven summary on New York City biking past and,
+hopefully, future.</p>
+<p>One dataset that piques your interest is the <a class="reference external" href="https://data.cityofnewyork.us/Transportation/Bicycle-Counts-for-East-River-Bridges/gua4-p9wg">NYC DOT East River Bicycle Counts dataset</a>. However, when you download
+this data you see that not only is the data split across several files, organized by month, but that furthermore
+it’s locked inside of formatted Excel files:</p>
+<img alt="http://i.imgur.com/dsamllb.png" src="http://i.imgur.com/dsamllb.png" />
+<p>Let’s write a couple of one-off scripts for processing this data. The first of these is <code class="docutils literal"><span class="pre">depositor.py</span></code>. All this
+does is download the data and store it locally:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://data.cityofnewyork.us/download/gua4-p9wg/application</span><span class="si">%2F</span><span class="s2">zip&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;nyc-east-river-bicycle-counts.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This script is basically a network test: it makes sure that the data is still where we think it should be. Next we’ll
+write a <code class="docutils literal"><span class="pre">transform.py</span></code>, which actually chews through this data and transform it into something you can actually
+use. This will go something like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">zipfile</span> <span class="k">import</span> <span class="n">ZipFile</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">ZipFile</span><span class="p">(</span><span class="s2">&quot;nyc-east-river-bicycle-counts.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">z</span><span class="o">.</span><span class="n">extractall</span><span class="p">()</span>
+
+<span class="n">workbooks</span> <span class="o">=</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;xls&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+<span class="n">data_by_month</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="kn">import</span> <span class="nn">xlrd</span>
+<span class="k">for</span> <span class="n">workbook</span> <span class="ow">in</span> <span class="n">workbooks</span><span class="p">:</span>
+    <span class="n">sheet</span> <span class="o">=</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span><span class="n">workbook</span><span class="p">)</span><span class="o">.</span><span class="n">sheets</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="p">[</span><span class="o">...</span><span class="n">do</span> <span class="n">some</span> <span class="n">operations</span><span class="o">...</span><span class="p">]</span>
+
+    <span class="n">data_by_moth</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">unified_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data_by_month</span><span class="p">)</span>
+<span class="n">unified_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;nyc-east-river-bicycle-counts.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To fully process this data, therefore, we need to do two things: download it, then parse it. That means we have to
+tell our users to run <code class="docutils literal"><span class="pre">python</span> <span class="pre">depositor.py</span></code> then <code class="docutils literal"><span class="pre">python</span> <span class="pre">transform.py</span></code> from the terminal, in that order.</p>
+<p>Simple enough. But we can make things even simpler with <code class="docutils literal"><span class="pre">airscooter</span></code>.</p>
+<p>Begin by running the following in the terminal:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">airscooter</span> <span class="n">init</span>
+</pre></div>
+</div>
+<p>This will initialize a <code class="docutils literal"><span class="pre">.airflow</span></code> folder inside of the current directory, and configure everything inside of it as
+an <code class="docutils literal"><span class="pre">airscooter</span></code> package. Then, back at the command line, run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">airscooter</span> <span class="n">link</span> <span class="n">depositor</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nyc-east-river-bicycle-counts.zip&quot;</span><span class="p">]</span>
+<span class="n">airscooter</span> <span class="n">link</span> <span class="n">transform</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nyc-east-river-bicycle-counts.zip&quot;</span><span class="p">]</span> <span class="o">--</span><span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nyc-east-river-bicycle-counts.csv&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Behind the scenes, <code class="docutils literal"><span class="pre">airflow</span></code> figures out that to run <code class="docutils literal"><span class="pre">transform.py</span></code>, we logically need <code class="docutils literal"><span class="pre">depositor.py</span></code> to
+succeed. So it configures itself to run them in dependency order: first, run the task that generates the data; then,
+run the task that processes it. Downloading is the job of our <strong>depositor task</strong>; translating the resulting files
+into something useful is the job of our <strong>transform task</strong>. Together, these two operations make up a rudimentary
+<strong>task graph</strong>.</p>
+<p>Building such simple, executable task graphs is what <code class="docutils literal"><span class="pre">airscooter</span></code> is all about. From now on, if we want to
+regenerate this same data again, we can do so with just one terminal command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">airscooter</span> <span class="n">run</span>
+</pre></div>
+</div>
+<p>This, in a nutshell, is all <code class="docutils literal"><span class="pre">airscooter</span></code> does. Write a bunch of process files that do stuff (currently, <code class="docutils literal"><span class="pre">py</span></code>,
+<code class="docutils literal"><span class="pre">ipynb</span></code>, and <code class="docutils literal"><span class="pre">sh</span></code> files are supposed), then run a few <code class="docutils literal"><span class="pre">airscooter</span> <span class="pre">link</span></code> commands through the command line to
+thread them all together. The next person need only execute <code class="docutils literal"><span class="pre">airscooter</span> <span class="pre">run</span></code> to put Humpty Dumpty back together again.</p>
+</div>
+<div class="section" id="why">
+<h2>Why<a class="headerlink" href="#why" title="Permalink to this headline">¶</a></h2>
+<p>Our overly simple example doesn’t explain <em>why</em> we want to do this. If <code class="docutils literal"><span class="pre">nyc-east-river-bicycle-counts.csv</span></code>
+is a one-off thing, you can get away with just documenting how you got the data in a <code class="docutils literal"><span class="pre">README.md</span></code> in a GitHub
+repository. However, the additional formality that <code class="docutils literal"><span class="pre">airscooter</span></code> introduces is extremely useful when you start to do
+this at scale.</p>
+<p>Imagine that we have simple data engineering tasks like this one: but <em>lots</em> of them. The project for which
+<code class="docutils literal"><span class="pre">airflow</span></code> was originally developed theoretically needed to manage running hundreds of these simple tasks. This is
+an altogether common scenario, as any data analytics shop that isn’t in the business of creating data likely has many
+poorly documented “fetch scripts” lying about. If your team can converge on saving their work in this format, you can
+save yourself a lot of what-was-this-person-thinking headaches down the road. And if you want to start running such
+tasks <em>systematically</em> (as I did), standardized one-button runnability is an absolute necessity.</p>
+<p>Or, imagine that we have one such data engineering task, but it’s <em>huge</em>. Many different moving parts are involved;
+you’re fetching data from three, five, ten different raw files to compose your resultant dataset. There are so many
+steps involved that our little <code class="docutils literal"><span class="pre">README.md</span></code> note is now ineffectual. <code class="docutils literal"><span class="pre">airscooter</span></code> is extremely helpful in this
+scenario because it lets you standardize your runtime methodology. To puzzle back together the order things are meant
+to be run in, just inspect the <code class="docutils literal"><span class="pre">airscooter</span></code> task graph. To run them all, just run <code class="docutils literal"><span class="pre">airscooter</span> <span class="pre">run</span></code>. The
+underlying if-this-then-that may be complicated, but the end result will still be transparent to collaborators,
+copycats, and six-months-older self that have to regenerate the data for themselves without present-you input.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, ResidentMario.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
