@@ -14,7 +14,7 @@ pip install git+git://github.com/apache/incubator-airflow.git
 pip install git+git://github.com/ResidentMario/airscooter.git
 ```
 
-A `PyPi` release is on hold until `airflow@1.9.0` (or `airflow@1.8.1rc2`) is released, due to [a break bug](https://issues.apache.org/jira/browse/AIRFLOW-1165) that was only fixed recently.
+A `PyPi` release is on hold until `airflow@1.9.0` (or `airflow@1.8.1rc2`) is released, due to [a breaking bug](https://issues.apache.org/jira/browse/AIRFLOW-1165) that was only fixed recently.
 
 ## Development
 
