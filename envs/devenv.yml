@@ -7,3 +7,5 @@ dependencies:
     - click
     - click-plugins
     - pytest-ordering
+    - sphinx
+    - sphinx_rtd_theme
