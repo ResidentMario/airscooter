@@ -3,11 +3,7 @@
 `airscooter` is a library and command-line utility for creating and executing simple graph-based workflows. A 
 lightweight wrapper over [Apache Airflow](https://github.com/apache/incubator-airflow), it is designed 
 to make workflows involving downloading, extracting, cleaning, and building datasets easily managable, 
-reproducible, and triggable.
-
-## Quickstart
-
-Forthcoming.
+reproducible, and triggerable.
 
 ## Installation
 
@@ -18,10 +14,8 @@ pip install git+git://github.com/apache/incubator-airflow.git
 pip install git+git://github.com/ResidentMario/airscooter.git
 ```
 
+A `PyPi` release is on hold until `airflow@1.9.0` (or `airflow@1.8.1rc2`) is released, due to [a break bug](https://issues.apache.org/jira/browse/AIRFLOW-1165) that was only fixed recently.
+
 ## Development
 
-`airscooter` is alpha-level software, and is still under active development.
-
-* Python 3.6 or better (py-2 compatibility is possible, though it would be difficult to implement).
-* Airflow trunk (via `pip install git+git://github.com/apache/incubator-airflow.git`; `pip install cryptography`), 
-due to [this bug](https://issues.apache.org/jira/browse/AIRFLOW-1165).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for further details.
