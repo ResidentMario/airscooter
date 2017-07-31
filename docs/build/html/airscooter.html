@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>airscooter package &mdash; airscooter 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="airscooter 0.0.1 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> airscooter
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">airscooter package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-airscooter.cli">airscooter.cli module</a></li>
+<li><a class="reference internal" href="#module-airscooter.depositor">airscooter.depositor module</a></li>
+<li><a class="reference internal" href="#module-airscooter.orchestration">airscooter.orchestration module</a></li>
+<li><a class="reference internal" href="#module-airscooter.transform">airscooter.transform module</a></li>
+<li><a class="reference internal" href="#module-airscooter">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">airscooter</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>airscooter package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/airscooter.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="airscooter-package">
+<h1>airscooter package<a class="headerlink" href="#airscooter-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-airscooter.cli">
+<span id="airscooter-cli-module"></span><h2>airscooter.cli module<a class="headerlink" href="#module-airscooter.cli" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-airscooter.depositor">
+<span id="airscooter-depositor-module"></span><h2>airscooter.depositor module<a class="headerlink" href="#module-airscooter.depositor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="airscooter.depositor.Depositor">
+<em class="property">class </em><code class="descclassname">airscooter.depositor.</code><code class="descname">Depositor</code><span class="sig-paren">(</span><em>name</em>, <em>filename</em>, <em>output</em>, <em>dummy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/depositor.html#Depositor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.depositor.Depositor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>A Depositor is (ontologically) a data dumping task that takes data from somewhere and places it onto the local
+machine.</p>
+<dl class="method">
+<dt id="airscooter.depositor.Depositor.as_airflow_string">
+<code class="descname">as_airflow_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/depositor.html#Depositor.as_airflow_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.depositor.Depositor.as_airflow_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns this object’s Airflow string, ready to be written to a Python DAG file. This method is used at the
+orchestration layer for instantiating the Airflow DAG. However, it is incomplete, because it does not set
+any task dependencies, which are handled separately in orchestration.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="airscooter.depositor.Depositor.datafy">
+<code class="descname">datafy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/depositor.html#Depositor.datafy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.depositor.Depositor.datafy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns this object’s simplified JSON representation. This is used for serialization to YAML, which is used
+in turn to allow object persistence.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-airscooter.orchestration">
+<span id="airscooter-orchestration-module"></span><h2>airscooter.orchestration module<a class="headerlink" href="#module-airscooter.orchestration" title="Permalink to this headline">¶</a></h2>
+<p>Orchestration layer.</p>
+<dl class="function">
+<dt id="airscooter.orchestration.configure">
+<code class="descclassname">airscooter.orchestration.</code><code class="descname">configure</code><span class="sig-paren">(</span><em>localize=True</em>, <em>local_folder='.airflow'</em>, <em>init=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/orchestration.html#configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.orchestration.configure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configures Airflow for use within Airscooter.</p>
+<dl class="docutils">
+<dt>localize: bool, default True</dt>
+<dd><p class="first">By default, overwrite the AIRFLOW_HOME environment variable and the values set in the airflow.cfg file to
+point at a local “.airflow” folder. This is desirable behavior for maintaining several separable DAGs on one
+machine, with each DAG corresponding with a single directory, and thus a single project or git repository
+thereof.</p>
+<p class="last">If localize is set to False, airscooter will inherit the current global Airflow settings. This is the vanilla
+behavior, and may be preferable in advanced circumstances (which ones TBD).</p>
+</dd>
+<dt>local_folder: str, default “.airflow”</dt>
+<dd>The name of the local folder that the DAG gets written to. Airscooter configures Airflow to work against this
+folder.</dd>
+<dt>init: bool, default False</dt>
+<dd>Whether or not to initialize the database.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="airscooter.orchestration.create_airflow_string">
+<code class="descclassname">airscooter.orchestration.</code><code class="descname">create_airflow_string</code><span class="sig-paren">(</span><em>tasks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/orchestration.html#create_airflow_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.orchestration.create_airflow_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a task graph (as a list of tasks), generates an Airflow DAG file.</p>
+<dl class="docutils">
+<dt>tasks: list of {Transform, Depositor} objects, required</dt>
+<dd>The tasks constituting the task graph to be written as a DAG.</dd>
+</dl>
+<p>The Airflow DAG as a string, ready to be written to the file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="airscooter.orchestration.deserialize">
+<code class="descclassname">airscooter.orchestration.</code><code class="descname">deserialize</code><span class="sig-paren">(</span><em>yml_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/orchestration.html#deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.orchestration.deserialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a task graph YAML serialization, returns the list of airscooter objects (Transform and Depositor objects)
+making up this task graph.</p>
+<dl class="docutils">
+<dt>yml_data: str, required</dt>
+<dd>The YAML representation being deserialized.</dd>
+</dl>
+<p>The resultant airscooter task list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="airscooter.orchestration.deserialize_from_file">
+<code class="descclassname">airscooter.orchestration.</code><code class="descname">deserialize_from_file</code><span class="sig-paren">(</span><em>yml_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/orchestration.html#deserialize_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.orchestration.deserialize_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a task graph YAML serialization, returns the constituent list of airscooter task graph objects. I/O wrapper
+for <cite>deserialize</cite>.</p>
+<dl class="docutils">
+<dt>yml_filename: str, required</dt>
+<dd>The name of the file the data will be read in from.</dd>
+</dl>
+<p>The resultant airscooter task list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="airscooter.orchestration.run">
+<code class="descclassname">airscooter.orchestration.</code><code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/orchestration.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.orchestration.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a DAG.</p>
+<dl class="docutils">
+<dt>pin, str or None, default None</dt>
+<dd>If this parameter is None, run the task with this name in the mode set by the run_mode parameter.</dd>
+<dt>run_mode, {‘forward’, ‘backwards’, ‘all’}, default None</dt>
+<dd>If <cite>pin</cite> is None, do nothing. Otherwise, do the following. If set to ‘forward’, run this task and all tasks
+that come after it, stubbing out any unfulfilled requirements with dummy operators. If set to ‘backwards’,
+run this task and any tasks that come before, again with stubs. If set to ‘all’, run all dependent and
+expectant tasks, again with stubs. In this case, if this parameter is left as None, raises a ValueError.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="airscooter.orchestration.serialize_tasks">
+<code class="descclassname">airscooter.orchestration.</code><code class="descname">serialize_tasks</code><span class="sig-paren">(</span><em>tasks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/orchestration.html#serialize_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.orchestration.serialize_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a list of tasks into a YAML serialization thereof.</p>
+<dl class="docutils">
+<dt>tasks: list, required</dt>
+<dd>A list of tasks.</dd>
+</dl>
+<dl class="docutils">
+<dt>yml_repr, str</dt>
+<dd>A YAML serialization thereof.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="airscooter.orchestration.serialize_to_file">
+<code class="descclassname">airscooter.orchestration.</code><code class="descname">serialize_to_file</code><span class="sig-paren">(</span><em>tasks</em>, <em>yml_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/orchestration.html#serialize_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.orchestration.serialize_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of tasks, writes a simplified YAML serialization thereof to a file. This method enables task graph
+persistence: at the CLI level, additional tasks getting written to the graph check and write to this data to
+maintain a consistent state.</p>
+<dl class="docutils">
+<dt>tasks: list, required</dt>
+<dd>A list of tasks.</dd>
+<dt>yml_filename: str, required</dt>
+<dd>The filename to which the YAML representation will be written.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="airscooter.orchestration.write_airflow_string">
+<code class="descclassname">airscooter.orchestration.</code><code class="descname">write_airflow_string</code><span class="sig-paren">(</span><em>tasks</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/orchestration.html#write_airflow_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.orchestration.write_airflow_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the Airflow DAG file for the given tasks. I/O wrapper for <cite>create_airflow_string</cite>.</p>
+<dl class="docutils">
+<dt>tasks: list of {Transform, Depositor} objects, required</dt>
+<dd>The tasks constituting the task graph to be written as a DAG.</dd>
+<dt>filename: str, required</dt>
+<dd>The filename the DAG will be written to.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-airscooter.transform">
+<span id="airscooter-transform-module"></span><h2>airscooter.transform module<a class="headerlink" href="#module-airscooter.transform" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="airscooter.transform.Transform">
+<em class="property">class </em><code class="descclassname">airscooter.transform.</code><code class="descname">Transform</code><span class="sig-paren">(</span><em>name</em>, <em>filename</em>, <em>input</em>, <em>output</em>, <em>requirements=None</em>, <em>dummy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/transform.html#Transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.transform.Transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>A Transform is a data manipulation task that “transforms” input data into output data.</p>
+<dl class="method">
+<dt id="airscooter.transform.Transform.as_airflow_string">
+<code class="descname">as_airflow_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/transform.html#Transform.as_airflow_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.transform.Transform.as_airflow_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns this object’s Airflow string, ready to be written to a Python DAG file. This method is used at the
+orchestration layer for instantiating the Airflow DAG. However, it is incomplete, because it does not set
+any task dependencies, which are handled separately in orchestration.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="airscooter.transform.Transform.datafy">
+<code class="descname">datafy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/airscooter/transform.html#Transform.datafy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#airscooter.transform.Transform.datafy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns this object’s simplified JSON representation. This is used for serialization to YAML, which is used
+in turn to allow object persistence.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-airscooter">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-airscooter" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, ResidentMario.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

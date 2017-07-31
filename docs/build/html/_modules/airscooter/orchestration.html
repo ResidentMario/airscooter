@@ -1,0 +1,549 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>airscooter.orchestration &mdash; airscooter 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="airscooter 0.0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> airscooter
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">airscooter</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>airscooter.orchestration</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for airscooter.orchestration</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Orchestration layer.&quot;&quot;&quot;</span>
+
+<span class="c1"># import airflow</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">.transform</span> <span class="k">import</span> <span class="n">Transform</span>
+<span class="kn">from</span> <span class="nn">.depositor</span> <span class="k">import</span> <span class="n">Depositor</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+
+
+<div class="viewcode-block" id="serialize_tasks"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.serialize_tasks">[docs]</a><span class="k">def</span> <span class="nf">serialize_tasks</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforms a list of tasks into a YAML serialization thereof.</span>
+
+<span class="sd">    Requires</span>
+<span class="sd">    --------</span>
+<span class="sd">    tasks: list, required</span>
+<span class="sd">        A list of tasks.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    yml_repr, str</span>
+<span class="sd">        A YAML serialization thereof.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tasks_dict</span> <span class="o">=</span> <span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">datafy</span><span class="p">()</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">]</span>
+    <span class="n">yml_repr</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s1">&#39;tasks&#39;</span><span class="p">:</span> <span class="n">tasks_dict</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">yml_repr</span></div>
+
+
+<div class="viewcode-block" id="serialize_to_file"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.serialize_to_file">[docs]</a><span class="k">def</span> <span class="nf">serialize_to_file</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">yml_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of tasks, writes a simplified YAML serialization thereof to a file. This method enables task graph</span>
+<span class="sd">    persistence: at the CLI level, additional tasks getting written to the graph check and write to this data to</span>
+<span class="sd">    maintain a consistent state.</span>
+
+<span class="sd">    Requires</span>
+<span class="sd">    --------</span>
+<span class="sd">    tasks: list, required</span>
+<span class="sd">        A list of tasks.</span>
+<span class="sd">    yml_filename: str, required</span>
+<span class="sd">        The filename to which the YAML representation will be written.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">yml_repr</span> <span class="o">=</span> <span class="n">serialize_tasks</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yml_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yml_repr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="deserialize"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.deserialize">[docs]</a><span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="n">yml_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a task graph YAML serialization, returns the list of airscooter objects (Transform and Depositor objects)</span>
+<span class="sd">    making up this task graph.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    yml_data: str, required</span>
+<span class="sd">        The YAML representation being deserialized.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The resultant airscooter task list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hash_table</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">task_repr</span> <span class="ow">in</span> <span class="n">yml_data</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;depositor&#39;</span><span class="p">:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">Depositor</span><span class="p">(</span>
+                <span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                <span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span>
+                <span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">],</span>
+                <span class="n">dummy</span><span class="o">=</span><span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;dummy&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">Transform</span><span class="p">(</span>
+                <span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                <span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span>
+                <span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">],</span>
+                <span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">hash_table</span><span class="p">[</span><span class="n">task_repr</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">task</span>
+
+    <span class="k">for</span> <span class="n">yml_repr</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">yml_data</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">],</span> <span class="n">tasks</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">Transform</span><span class="p">):</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">requirements</span> <span class="o">=</span> <span class="p">[</span><span class="n">hash_table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">yml_repr</span><span class="p">[</span><span class="s1">&#39;requirements&#39;</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">tasks</span></div>
+
+
+<div class="viewcode-block" id="deserialize_from_file"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.deserialize_from_file">[docs]</a><span class="k">def</span> <span class="nf">deserialize_from_file</span><span class="p">(</span><span class="n">yml_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a task graph YAML serialization, returns the constituent list of airscooter task graph objects. I/O wrapper</span>
+<span class="sd">    for `deserialize`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    yml_filename: str, required</span>
+<span class="sd">        The name of the file the data will be read in from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The resultant airscooter task list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yml_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">yml_data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">yml_data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_airflow_string"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.create_airflow_string">[docs]</a><span class="k">def</span> <span class="nf">create_airflow_string</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a task graph (as a list of tasks), generates an Airflow DAG file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tasks: list of {Transform, Depositor} objects, required</span>
+<span class="sd">        The tasks constituting the task graph to be written as a DAG.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The Airflow DAG as a string, ready to be written to the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: start_date corresponding with the current UTC date.</span>
+    <span class="n">datetime_as_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;datetime(&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="p">),</span> <span class="s2">&quot;, &quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">),</span> <span class="s2">&quot;, &quot;</span><span class="p">,</span>
+                               <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">),</span> <span class="s2">&quot;)&quot;</span><span class="p">])</span>
+    <span class="n">ret_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">from airflow import DAG</span>
+<span class="s2">from airflow.operators.bash_operator import BashOperator</span>
+<span class="s2">from airflow.operators.dummy_operator import DummyOperator</span>
+<span class="s2">from datetime import datetime, timedelta</span>
+
+<span class="s2">default_args = {</span>
+<span class="s2">    &#39;owner&#39;: &#39;airflow&#39;,</span>
+<span class="s2">    &#39;depends_on_past&#39;: False,</span>
+<span class="s2">    &#39;email&#39;: [&#39;airflow@airflow.com&#39;],</span>
+<span class="s2">    &#39;email_on_failure&#39;: False,</span>
+<span class="s2">    &#39;email_on_retry&#39;: False,</span>
+<span class="s2">    &#39;retries&#39;: 0,</span>
+<span class="s2">    &#39;retry_delay&#39;: timedelta(minutes=5),</span>
+<span class="s2">    &#39;start_date&#39;: -0-,</span>
+<span class="s2">    &#39;schedule_interval&#39;: &#39;@once&#39;,</span>
+<span class="s2">}</span>
+
+<span class="s2">dag = DAG(&#39;airscooter_dag&#39;, default_args=default_args, schedule_interval=timedelta(1))</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-0-&quot;</span><span class="p">,</span> <span class="n">datetime_as_str</span><span class="p">)</span>  <span class="c1"># Avoids doubled-{} problems.</span>
+
+    <span class="n">dependencies_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+        <span class="n">ret_str</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">task</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; = &quot;</span> <span class="o">+</span> <span class="n">task</span><span class="o">.</span><span class="n">as_airflow_string</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="s2">&quot;requirements&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">task</span><span class="o">.</span><span class="n">requirements</span><span class="p">:</span>
+                <span class="n">dependencies_str</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="si">{0}</span><span class="s2">.set_upstream(</span><span class="si">{1}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">requirement</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">ret_str</span> <span class="o">=</span> <span class="n">ret_str</span> <span class="o">+</span> <span class="n">dependencies_str</span>
+    <span class="k">return</span> <span class="n">ret_str</span></div>
+
+
+<div class="viewcode-block" id="write_airflow_string"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.write_airflow_string">[docs]</a><span class="k">def</span> <span class="nf">write_airflow_string</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes the Airflow DAG file for the given tasks. I/O wrapper for `create_airflow_string`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tasks: list of {Transform, Depositor} objects, required</span>
+<span class="sd">        The tasks constituting the task graph to be written as a DAG.</span>
+<span class="sd">    filename: str, required</span>
+<span class="sd">        The filename the DAG will be written to.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">create_airflow_string</span><span class="p">(</span><span class="n">tasks</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="configure"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.configure">[docs]</a><span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="n">localize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">local_folder</span><span class="o">=</span><span class="s2">&quot;.airflow&quot;</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configures Airflow for use within Airscooter.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    localize: bool, default True</span>
+<span class="sd">        By default, overwrite the AIRFLOW_HOME environment variable and the values set in the airflow.cfg file to</span>
+<span class="sd">        point at a local &quot;.airflow&quot; folder. This is desirable behavior for maintaining several separable DAGs on one</span>
+<span class="sd">        machine, with each DAG corresponding with a single directory, and thus a single project or git repository</span>
+<span class="sd">        thereof.</span>
+
+<span class="sd">        If localize is set to False, airscooter will inherit the current global Airflow settings. This is the vanilla</span>
+<span class="sd">        behavior, and may be preferable in advanced circumstances (which ones TBD).</span>
+<span class="sd">    local_folder: str, default &quot;.airflow&quot;</span>
+<span class="sd">        The name of the local folder that the DAG gets written to. Airscooter configures Airflow to work against this</span>
+<span class="sd">        folder.</span>
+<span class="sd">    init: bool, default False</span>
+<span class="sd">        Whether or not to initialize the database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">localize</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;AIRFLOW_HOME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;./.airflow&quot;</span><span class="p">)</span>
+        <span class="n">dag_folder_path</span> <span class="o">=</span> <span class="s2">&quot;./</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">local_folder</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;./.airflow&quot;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">dag_folder_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">init</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;airflow&quot;</span><span class="p">,</span> <span class="s2">&quot;initdb&quot;</span><span class="p">],</span> <span class="n">env</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>  <span class="c1"># resetdb?</span></div>
+
+
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">():</span>  <span class="c1"># pin=None, run_mode=None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs a DAG.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pin, str or None, default None</span>
+<span class="sd">        If this parameter is None, run the task with this name in the mode set by the run_mode parameter.</span>
+<span class="sd">    run_mode, {&#39;forward&#39;, &#39;backwards&#39;, &#39;all&#39;}, default None</span>
+<span class="sd">        If `pin` is None, do nothing. Otherwise, do the following. If set to &#39;forward&#39;, run this task and all tasks</span>
+<span class="sd">        that come after it, stubbing out any unfulfilled requirements with dummy operators. If set to &#39;backwards&#39;,</span>
+<span class="sd">        run this task and any tasks that come before, again with stubs. If set to &#39;all&#39;, run all dependent and</span>
+<span class="sd">        expectant tasks, again with stubs. In this case, if this parameter is left as None, raises a ValueError.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Use https://github.com/teamclairvoyant/airflow-rest-api-plugin</span>
+    <span class="c1"># if pin is not None:</span>
+    <span class="c1">#     # TODO: Implement subgraph runs.</span>
+    <span class="c1">#     # Stash the current YML.</span>
+    <span class="c1">#     current_graph = deserialize_from_file(&quot;./.airflow/airscooter.yml&quot;)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if run_mode is None or run_mode not in {&#39;forward&#39;, &#39;backwards&#39;, &#39;all&#39;}:</span>
+    <span class="c1">#         raise ValueError(&quot;A pinned task was passed without a valid run mode specified.&quot;)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # Identify which tasks in the graph do not need to be run because they do not come after the chosen starting</span>
+    <span class="c1">#     # task.</span>
+    <span class="c1">#     def compute_forward_subgraph(task, subgraph_tasks):</span>
+    <span class="c1">#         additional_tasks = {next_task for next_task in current_graph if next_task in task.requirements}</span>
+    <span class="c1">#         subgraph_tasks.update(additional_tasks)</span>
+    <span class="c1">#</span>
+    <span class="c1">#         for next_task in additional_tasks:</span>
+    <span class="c1">#             subgraph_tasks = compute_forward_subgraph(next_task, subgraph_tasks)</span>
+    <span class="c1">#</span>
+    <span class="c1">#         return subgraph_tasks</span>
+    <span class="c1">#</span>
+    <span class="c1">#     starting_task = next(task for task in current_graph if task.name == pin)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if run_mode == &#39;forward&#39;:</span>
+    <span class="c1">#         subgraph = compute_forward_subgraph(starting_task, {starting_task})</span>
+    <span class="c1">#     elif run_mode == &#39;backwards&#39;:</span>
+    <span class="c1">#         raise NotImplementedError(&quot;Backwards-facing pinned runs have not been implemented yet.&quot;)</span>
+    <span class="c1">#     else:  # run_mode == &quot;all&quot;</span>
+    <span class="c1">#         raise NotImplementedError(&quot;Bidirectional pinned runs have not been implemented yet.&quot;)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # Create dummies for the co-dependent tasks.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # Pop the current YML back into place.</span>
+    <span class="c1">#     serialize_to_file(current_graph, &#39;./.airflow/airscooter.yml&#39;)</span>
+    <span class="c1">#     # raise NotImplementedError(&quot;Subgraph runs have not been implemented yet.&quot;)</span>
+
+    <span class="k">def</span> <span class="nf">get_run_date</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tasks</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;./.airflow/logs/airscooter_dag&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">sample_task</span> <span class="o">=</span> <span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sample_task_logs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;./.airflow/logs/airscooter_dag/&quot;</span> <span class="o">+</span> <span class="n">sample_task</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_task_logs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">latest_timestamp</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sample_task_logs</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">latest_timestamp</span>
+
+    <span class="n">webserver_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s2">&quot;airflow&quot;</span><span class="p">,</span> <span class="s2">&quot;webserver&quot;</span><span class="p">])</span>
+    <span class="n">scheduler_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s2">&quot;airflow&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Schedule a DAG run. This command schedules a run and returns; it does not wait for the (potentially</span>
+        <span class="c1"># threaded) process to actually complete. So we will need to wait for outputs ourselves later, before killing</span>
+        <span class="c1"># the process itself.</span>
+        <span class="c1"># See also https://issues.apache.org/jira/browse/AIRFLOW-43.</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;airflow&quot;</span><span class="p">,</span> <span class="s2">&quot;trigger_dag&quot;</span><span class="p">,</span> <span class="s2">&quot;airscooter_dag&quot;</span><span class="p">],</span> <span class="n">env</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+        <span class="c1"># DAGs are added to the schedule in a paused state by default. It is possible to have them added to the</span>
+        <span class="c1"># schedule in an unpaused state by editing the requisite config file, but I abstain from doing so in order to</span>
+        <span class="c1">#  keep the defaults as close to the global default as possible. Instead we&#39;ll run another CLI command for</span>
+        <span class="c1"># unpausing the graph.</span>
+        <span class="c1">#</span>
+        <span class="c1"># The nuance here is that the CLI returns prior to the DAG Run actually being scheduled, so unpause will have</span>
+        <span class="c1"># no effect in the quick sequence in which it runs. I insert a 1-second sleep here as a brute-force way of</span>
+        <span class="c1"># keeping this from happening.</span>
+        <span class="c1"># TODO: This is a hack. There&#39;s got to be a better way of handling this.</span>
+        <span class="kn">import</span> <span class="nn">time</span><span class="p">;</span> <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;airflow&quot;</span><span class="p">,</span> <span class="s2">&quot;unpause&quot;</span><span class="p">,</span> <span class="s2">&quot;airscooter_dag&quot;</span><span class="p">],</span> <span class="n">env</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="c1"># If an exception was raised, proceed to killing the processes.</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># TODO: This could be improved by manipulating airflow&#39;s internal API somehow, instead of beating on the CLI.</span>
+        <span class="kn">import</span> <span class="nn">time</span>
+        <span class="c1"># If not, poll for the completion of the DAG run. Only continue when the deed is done.</span>
+        <span class="n">run_date</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="c1"># airflow includes a command for getting the status of a DAG run. Unfortunately this command relies on</span>
+            <span class="c1"># knowing the run date of the run. This is problematic for us because we trigger DAG runs whenever---we</span>
+            <span class="c1"># are not *truly* using the scheduler.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">run_date</span><span class="p">:</span>
+                <span class="n">run_date</span> <span class="o">=</span> <span class="n">get_run_date</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">run_date</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;airflow&quot;</span><span class="p">,</span> <span class="s2">&quot;dag_state&quot;</span><span class="p">,</span> <span class="s2">&quot;airscooter_dag&quot;</span><span class="p">,</span> <span class="n">run_date</span><span class="p">],</span>
+                                        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span>
+                <span class="n">run_status</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># hacky, but necessary.</span>
+                <span class="k">if</span> <span class="n">run_status</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;running&#39;</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># TODO: Provide information on DAG run exit status.</span>
+
+        <span class="c1"># TODO: https://stackoverflow.com/questions/45064030/airflow-webserver-launched-via-subprocess-not-dying-on-kill</span>
+        <span class="c1"># Probably need to terminate the webserver by pid, using the airflow-webserver.pid file written to .airflow</span>
+        <span class="c1"># during a run.</span>
+        <span class="n">webserver_process</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+        <span class="n">scheduler_process</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, ResidentMario.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

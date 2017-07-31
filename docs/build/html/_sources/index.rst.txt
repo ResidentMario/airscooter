@@ -1,15 +1,14 @@
-.. airscooter documentation master file, created by
-   sphinx-quickstart on Sun Jul 30 00:00:09 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to airscooter's documentation!
-======================================
+Airscooter: graph-based data management
+=======================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+
+`airscooter` is a library and command-line utility for creating and executing simple graph-based workflows. A
+lightweight wrapper over Apache Airflow, it is designed to make workflows involving downloading, extracting,
+cleaning, and building datasets easily managable, reproducible, and triggerable.
 
 
 Indices and tables
