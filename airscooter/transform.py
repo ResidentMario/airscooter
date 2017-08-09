@@ -80,14 +80,14 @@ class Transform:
                 bash_command = f.read()
 
             return """BashOperator(bash_command=\"\"\"{0} \"\"\", task_id="{1}", dag=dag)""".format(
-                bash_command, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
+                bash_command, self.name
             )
         elif op_type == "py":
             # Airflow provides a Python operator for executing callable Python code objects. However, this is not
             # particularly desirable in terms of security because that would mean invoking an exec. A bash operator
             # launching the script as a process is safer.
             return """BashOperator(bash_command="python {0}", task_id="{1}", dag=dag)""".format(
-                self.filename, ".".join(self.filename.rsplit(".")[:-1]).split("/")[-1]
+                self.filename, self.name
             )
         elif op_type == "ipynb":
             return """BashOperator(bash_command="jupyter nbconvert --to notebook""" + \
