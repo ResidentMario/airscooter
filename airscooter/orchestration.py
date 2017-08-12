@@ -7,6 +7,7 @@ from .depositor import Depositor
 import os
 import subprocess
 from datetime import datetime
+import psutil
 
 
 def serialize_tasks(tasks):
@@ -204,7 +205,7 @@ def configure(localize=True, local_folder=".airflow", init=False):
         subprocess.call(["airflow", "initdb"], env=os.environ.copy())  # resetdb?
 
 
-def run():  # pin=None, run_mode=None
+def run():
     """
     Runs a DAG.
 
@@ -219,40 +220,6 @@ def run():  # pin=None, run_mode=None
         expectant tasks, again with stubs. In this case, if this parameter is left as None, raises a ValueError.
     """
     # TODO: Use https://github.com/teamclairvoyant/airflow-rest-api-plugin
-    # if pin is not None:
-    #     # TODO: Implement subgraph runs.
-    #     # Stash the current YML.
-    #     current_graph = deserialize_from_file("./.airflow/airscooter.yml")
-    #
-    #     if run_mode is None or run_mode not in {'forward', 'backwards', 'all'}:
-    #         raise ValueError("A pinned task was passed without a valid run mode specified.")
-    #
-    #     # Identify which tasks in the graph do not need to be run because they do not come after the chosen starting
-    #     # task.
-    #     def compute_forward_subgraph(task, subgraph_tasks):
-    #         additional_tasks = {next_task for next_task in current_graph if next_task in task.requirements}
-    #         subgraph_tasks.update(additional_tasks)
-    #
-    #         for next_task in additional_tasks:
-    #             subgraph_tasks = compute_forward_subgraph(next_task, subgraph_tasks)
-    #
-    #         return subgraph_tasks
-    #
-    #     starting_task = next(task for task in current_graph if task.name == pin)
-    #
-    #     if run_mode == 'forward':
-    #         subgraph = compute_forward_subgraph(starting_task, {starting_task})
-    #     elif run_mode == 'backwards':
-    #         raise NotImplementedError("Backwards-facing pinned runs have not been implemented yet.")
-    #     else:  # run_mode == "all"
-    #         raise NotImplementedError("Bidirectional pinned runs have not been implemented yet.")
-    #
-    #     # Create dummies for the co-dependent tasks.
-    #
-    #     # Pop the current YML back into place.
-    #     serialize_to_file(current_graph, './.airflow/airscooter.yml')
-    #     # raise NotImplementedError("Subgraph runs have not been implemented yet.")
-
     def get_run_date():
         try:
             tasks = os.listdir("./.airflow/logs/airscooter_dag")
@@ -322,8 +289,9 @@ def run():  # pin=None, run_mode=None
     finally:
         # TODO: Provide information on DAG run exit status.
 
-        # TODO: https://stackoverflow.com/questions/45064030/airflow-webserver-launched-via-subprocess-not-dying-on-kill
-        # Probably need to terminate the webserver by pid, using the airflow-webserver.pid file written to .airflow
-        # during a run.
-        webserver_process.kill()
-        scheduler_process.kill()
+        process = psutil.Process(webserver_process.pid)
+        for proc in process.children():
+            proc.kill()
+
+        webserver_process.terminate()
+        scheduler_process.terminate()
