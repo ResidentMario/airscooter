@@ -162,6 +162,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
 
 
 <div class="viewcode-block" id="serialize_tasks"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.serialize_tasks">[docs]</a><span class="k">def</span> <span class="nf">serialize_tasks</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
@@ -359,7 +360,7 @@
         <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;airflow&quot;</span><span class="p">,</span> <span class="s2">&quot;initdb&quot;</span><span class="p">],</span> <span class="n">env</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>  <span class="c1"># resetdb?</span></div>
 
 
-<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">():</span>  <span class="c1"># pin=None, run_mode=None</span>
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../airscooter.html#airscooter.orchestration.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Runs a DAG.</span>
 
@@ -374,40 +375,6 @@
 <span class="sd">        expectant tasks, again with stubs. In this case, if this parameter is left as None, raises a ValueError.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: Use https://github.com/teamclairvoyant/airflow-rest-api-plugin</span>
-    <span class="c1"># if pin is not None:</span>
-    <span class="c1">#     # TODO: Implement subgraph runs.</span>
-    <span class="c1">#     # Stash the current YML.</span>
-    <span class="c1">#     current_graph = deserialize_from_file(&quot;./.airflow/airscooter.yml&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     if run_mode is None or run_mode not in {&#39;forward&#39;, &#39;backwards&#39;, &#39;all&#39;}:</span>
-    <span class="c1">#         raise ValueError(&quot;A pinned task was passed without a valid run mode specified.&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # Identify which tasks in the graph do not need to be run because they do not come after the chosen starting</span>
-    <span class="c1">#     # task.</span>
-    <span class="c1">#     def compute_forward_subgraph(task, subgraph_tasks):</span>
-    <span class="c1">#         additional_tasks = {next_task for next_task in current_graph if next_task in task.requirements}</span>
-    <span class="c1">#         subgraph_tasks.update(additional_tasks)</span>
-    <span class="c1">#</span>
-    <span class="c1">#         for next_task in additional_tasks:</span>
-    <span class="c1">#             subgraph_tasks = compute_forward_subgraph(next_task, subgraph_tasks)</span>
-    <span class="c1">#</span>
-    <span class="c1">#         return subgraph_tasks</span>
-    <span class="c1">#</span>
-    <span class="c1">#     starting_task = next(task for task in current_graph if task.name == pin)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     if run_mode == &#39;forward&#39;:</span>
-    <span class="c1">#         subgraph = compute_forward_subgraph(starting_task, {starting_task})</span>
-    <span class="c1">#     elif run_mode == &#39;backwards&#39;:</span>
-    <span class="c1">#         raise NotImplementedError(&quot;Backwards-facing pinned runs have not been implemented yet.&quot;)</span>
-    <span class="c1">#     else:  # run_mode == &quot;all&quot;</span>
-    <span class="c1">#         raise NotImplementedError(&quot;Bidirectional pinned runs have not been implemented yet.&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # Create dummies for the co-dependent tasks.</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # Pop the current YML back into place.</span>
-    <span class="c1">#     serialize_to_file(current_graph, &#39;./.airflow/airscooter.yml&#39;)</span>
-    <span class="c1">#     # raise NotImplementedError(&quot;Subgraph runs have not been implemented yet.&quot;)</span>
-
     <span class="k">def</span> <span class="nf">get_run_date</span><span class="p">():</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tasks</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;./.airflow/logs/airscooter_dag&quot;</span><span class="p">)</span>
@@ -477,11 +444,12 @@
     <span class="k">finally</span><span class="p">:</span>
         <span class="c1"># TODO: Provide information on DAG run exit status.</span>
 
-        <span class="c1"># TODO: https://stackoverflow.com/questions/45064030/airflow-webserver-launched-via-subprocess-not-dying-on-kill</span>
-        <span class="c1"># Probably need to terminate the webserver by pid, using the airflow-webserver.pid file written to .airflow</span>
-        <span class="c1"># during a run.</span>
-        <span class="n">webserver_process</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
-        <span class="n">scheduler_process</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span></div>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">webserver_process</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">proc</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
+            <span class="n">proc</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+
+        <span class="n">webserver_process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+        <span class="n">scheduler_process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
 </pre></div>
 
            </div>
