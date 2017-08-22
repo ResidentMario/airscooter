@@ -199,23 +199,27 @@ does is download the data and store it locally:</p>
 write a <code class="docutils literal"><span class="pre">transform.py</span></code>, which actually chews through this data and transform it into something you can actually
 use. This will go something like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">zipfile</span> <span class="k">import</span> <span class="n">ZipFile</span>
+<span class="kn">from</span> <span class="nn">calendar</span> <span class="k">import</span> <span class="n">monthrange</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
 <span class="n">z</span> <span class="o">=</span> <span class="n">ZipFile</span><span class="p">(</span><span class="s2">&quot;nyc-east-river-bicycle-counts.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 <span class="n">z</span><span class="o">.</span><span class="n">extractall</span><span class="p">()</span>
 
-<span class="n">workbooks</span> <span class="o">=</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;xls&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">xlsx_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;xls&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
 
 <span class="n">data_by_month</span> <span class="o">=</span> <span class="p">[]</span>
 
-<span class="kn">import</span> <span class="nn">xlrd</span>
-<span class="k">for</span> <span class="n">workbook</span> <span class="ow">in</span> <span class="n">workbooks</span><span class="p">:</span>
-    <span class="n">sheet</span> <span class="o">=</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span><span class="n">workbook</span><span class="p">)</span><span class="o">.</span><span class="n">sheets</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="p">[</span><span class="o">...</span><span class="n">do</span> <span class="n">some</span> <span class="n">operations</span><span class="o">...</span><span class="p">]</span>
-
-    <span class="n">data_by_moth</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">xlsx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xlsx_list</span><span class="p">):</span>
+    <span class="n">days_in_month</span> <span class="o">=</span> <span class="n">monthrange</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;04 April 2016 Cyclist Numbers for Web.xlsx&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">days_in_month</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">data_by_month</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
 <span class="n">unified_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data_by_month</span><span class="p">)</span>
+<span class="n">unified_data</span> <span class="o">=</span> <span class="n">unified_data</span><span class="p">[</span><span class="n">unified_data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;T = trace of precipitation&#39;</span><span class="p">]</span>
+<span class="n">unified_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">unified_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;nyc-east-river-bicycle-counts.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
