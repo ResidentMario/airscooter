@@ -1,5 +1,5 @@
 import click
-from .orchestration import configure, deserialize_from_file, serialize_to_file
+from .orchestration import configure, deserialize_from_file, serialize_to_file, write_airflow_string
 from .orchestration import run as orchestrate_run
 from .depositor import Depositor
 from .transform import Transform
@@ -40,11 +40,15 @@ def link(task, inputs, outputs, dummy):
     if outputs is None:
         raise ValueError("No output filenames provided.")
 
-    _outputs = literal_eval(outputs) if outputs[0] == "[" else [outputs]
-    _inputs = None if inputs is None else literal_eval(inputs) if inputs[0] == "[" else [inputs]
+    def restringify(inp):
+        """Click automatically strips out escape characters on input, we need to add them back manually."""
+        return inp.replace("[", "[\"").replace("]", "\"]").replace(" ", "").replace(",", "\", \"")
+
+    _outputs = literal_eval(restringify(outputs)) if outputs[0] == "[" else [outputs]
+    _inputs = None if inputs is None else literal_eval(restringify(inputs)) if inputs[0] == "[" else [inputs]
     task_id = task.split(".")[0]
     is_transform = inputs is not None
-    is_dummy = dummy is not None
+    is_dummy = dummy is not False
 
     # Transform potential relative paths to absolute ones.
     _outputs = [str(Path(out).resolve()) for out in _outputs]
@@ -80,8 +84,12 @@ def link(task, inputs, outputs, dummy):
 
     serialize_to_file(graph, "./.airflow/airscooter.yml")
 
-    click.echo(task + "\n" + str(inputs) + "\n" + str(outputs))
-    click.echo(_task)
+    if not os.path.exists("./.airflow/dags/"):
+        os.mkdir("./.airflow/dags/")
+    write_airflow_string(graph, "./.airflow/dags/airscooter_dag.py")
+
+    # click.echo(task + "\n" + str(inputs) + "\n" + str(outputs))
+    # click.echo(_task)
 
 
 @click.command()
@@ -93,9 +101,6 @@ def run(starting_task):
 
     configure(init=False)
     orchestrate_run()
-
-    click.echo('\n\nThe run has ended. Visit localhost:8080 in your web browser to see the DAG Run results.')
-    # TODO: Figure out how to terminate the webserver on Ctrl+C without a sudo fuser. With if must.
 
 
 cli.add_command(init)
