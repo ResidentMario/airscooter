@@ -53,6 +53,7 @@ use. This will go something like this: ::
     from zipfile import ZipFile
     from calendar import monthrange
     import os
+    import pandas as pd
 
     z = ZipFile("nyc-east-river-bicycle-counts.zip", "r")
     z.extractall()
@@ -60,8 +61,6 @@ use. This will go something like this: ::
     xlsx_list = sorted([file for file in os.listdir(".") if "xls" in file.rsplit(".")[-1]])
 
     data_by_month = []
-
-    import pandas as pd
 
     for i, xlsx in enumerate(xlsx_list):
         days_in_month = monthrange(2016, i + 4)[1]
@@ -73,6 +72,11 @@ use. This will go something like this: ::
     unified_data = unified_data[unified_data['Date'] != 'T = trace of precipitation']
     unified_data.reset_index(drop=True, inplace=True)
     unified_data.to_csv("nyc-east-river-bicycle-counts.csv")
+
+    for fp in [file for file in os.listdir(".") if "xls" in file.rsplit(".")[-1]]:
+        os.remove(fp)
+    os.remove("Bicycle Counts for East River Bridges Metadata.docx")
+    os.remove("nyc-east-river-bicycle-counts.zip")
 
 To fully process this data, therefore, we need to do two things: download it, then parse it. That means we have to
 tell our users to run ``python depositor.py`` then ``python transform.py`` from the terminal, in that order.

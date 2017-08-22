@@ -201,6 +201,7 @@ use. This will go something like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">zipfile</span> <span class="k">import</span> <span class="n">ZipFile</span>
 <span class="kn">from</span> <span class="nn">calendar</span> <span class="k">import</span> <span class="n">monthrange</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">z</span> <span class="o">=</span> <span class="n">ZipFile</span><span class="p">(</span><span class="s2">&quot;nyc-east-river-bicycle-counts.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 <span class="n">z</span><span class="o">.</span><span class="n">extractall</span><span class="p">()</span>
@@ -208,8 +209,6 @@ use. This will go something like this:</p>
 <span class="n">xlsx_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;xls&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
 
 <span class="n">data_by_month</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">xlsx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xlsx_list</span><span class="p">):</span>
     <span class="n">days_in_month</span> <span class="o">=</span> <span class="n">monthrange</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -221,6 +220,11 @@ use. This will go something like this:</p>
 <span class="n">unified_data</span> <span class="o">=</span> <span class="n">unified_data</span><span class="p">[</span><span class="n">unified_data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;T = trace of precipitation&#39;</span><span class="p">]</span>
 <span class="n">unified_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">unified_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;nyc-east-river-bicycle-counts.csv&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;xls&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]:</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;Bicycle Counts for East River Bridges Metadata.docx&quot;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;nyc-east-river-bicycle-counts.zip&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To fully process this data, therefore, we need to do two things: download it, then parse it. That means we have to
