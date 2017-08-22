@@ -23,7 +23,9 @@ terminal command.
 Use Case
 --------
 
-To learn more, let's step through a use case.
+To learn more, let's step through a use case (`you can clone this example yourself`_).
+
+.. _you can clone this example yourself: https://github.com/ResidentMario/airscooter-quickstart-example
 
 Suppose that you're an analyst at a traffic planning consulting firm. You've been hired by the city of New York to
 help plan rolling out additional bike lines around the lower Manhattan region. As consultants are wont to do, you are
