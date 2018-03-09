@@ -7,7 +7,7 @@ reproducible, and triggerable.
 
 Installation is as easy as `pip install airscooter`.
 
-[**See the documentation for further details**](https://residentmario.github.io/airscooter/index.html).
+[**See the documentation for further details**](https://residentmario.github.io/airscooter/quickstart.html).
 
 ## Development
 
