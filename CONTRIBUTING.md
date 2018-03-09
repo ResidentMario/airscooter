@@ -18,7 +18,7 @@ A copy of the packages necessary for development is kept in `envs/devenv.yml`.
 
 # Tests
 
-`airflow` tests are located in the `tests` folder, and can be run via `pytest` (e.g. via `pytest tests/api_tests.py` 
+`airflow` tests are located in the `tests` folder, and can be run via `pytest`. (e.g. via `pytest api_tests.py` 
 from the command line).
 
 # Documentation

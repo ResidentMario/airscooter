@@ -1,4 +1,4 @@
-# airscooter ![t](https://img.shields.io/badge/status-alpha-red.svg)
+# airscooter [![](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/download/releases/3.4.0/) ![t](https://img.shields.io/badge/status-alpha-red.svg) [![](https://img.shields.io/github/license/ResidentMario/missingno.svg)](https://github.com/ResidentMario/missingno/blob/master/LICENSE.md)
 
 `airscooter` is a library and command-line utility for creating and executing simple graph-based workflows. A 
 lightweight wrapper over [Apache Airflow](https://github.com/apache/incubator-airflow), it is designed 
