@@ -1,10 +1,11 @@
 name: urban-physiology
 dependencies:
   - pytest
+  - jupyter
+  - click
+  - pyyaml
   - pip:
     - apache-airflow
-    - pyyaml
-    - click
     - click-plugins
     - pytest-ordering
     - sphinx

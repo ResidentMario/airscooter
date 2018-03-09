@@ -1,6 +1,7 @@
 .idea/
 notebooks/.ipynb_checkpoints
 .cache/
+.pytest_cache/
 */__pycache__/
 datablocks.egg-info/
 .airflow
