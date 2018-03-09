@@ -1,27 +1,54 @@
 `airscooter` is alpha-level software, and is still under active development.
 
-# Environment
+## Development
 
-Non-developmental installation requires Python >= 3.6 (due to [this bug](https://issues.apache.org/jira/browse/AIRFLOW-1165)) and 
-`apache-airflow` trunk. A copy of the necessary dependencies is kept at `envs/env.yml`.
+### Cloning
 
-To install a development version, make sure you have Python >= 3.6, clone this repository, then do an editable `pip` 
-install from root: 
+To work on `airscooter` locally, you will need to clone it.
 
-```bash
-git clone https://github.com/ResidentMario/airscooter.git
-cd airscooter
-pip install -e .
+```sh 
+git clone https://github.com/ResidentMario/missingno.git
 ```
 
-A copy of the packages necessary for development is kept in `envs/devenv.yml`.
+You can then set up your own branch version of the code, and work on your changes for a pull request from there.
 
-# Tests
+```sh
+cd airscooter
+git checkout -B new-branch-name
+```
+
+### Environment
+
+I strongly recommend creating a new virtual environment when working on `airscooter` (e.g. not using the base system 
+Python). You can do so with either [`conda`](https://conda.io/) or `virtualenv`. 
+
+I personally recommend doing the following:
+
+```sh
+conda env create --name airscooter-dev --file /airscooter/envs/devenv.yml --yes
+source activate airscooter
+```
+
+You should then create an [editable install](https://pip.pypa.io/en/latest/reference/pip_install/#editable-installs) of 
+`airscooter` suitable for tweaking and further development. Do this by running:
+
+```sh
+pip install -e airscooter .
+```
+
+Note that `airscooter` is (currently) only tested on Python 3.6 or better. Also, due to 
+[AIRFLOW-1165](https://issues.apache.org/jira/browse/AIRFLOW-1165), you need to be running on `airflow@1.8.1` or newer.
+
+### Testing
 
 `airflow` tests are located in the `tests` folder, and can be run via `pytest`. (e.g. via `pytest api_tests.py` 
-from the command line).
+from the command line). There are three test files:
 
-# Documentation
+* `api_tests.py` tests the user-level API.
+* `cli_tests.py` tests the user-level CLI.
+* `dag_tests.py` tests `airscooter` integration against `airflow`. These tests may take a while to execute.
+
+## Documentation
 
 `airflow` documentation is generated via [`sphinx`](http://www.sphinx-doc.org/en/stable/index.html) and served using [GitHub Pages](https://pages.github.com/). You can access it [here](https://residentmario.github.io/airscooter/index.html).
 
