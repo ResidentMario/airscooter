@@ -8,6 +8,7 @@ import os
 import subprocess
 from datetime import datetime
 import psutil
+import requests
 
 
 def serialize_tasks(tasks):
@@ -247,6 +248,7 @@ def run():
         # threaded) process to actually complete. So we will need to wait for outputs ourselves later, before killing
         # the process itself.
         # See also https://issues.apache.org/jira/browse/AIRFLOW-43.
+        # requests.post("http://localhost:8080/api/experimental/dags/airscooter_dag/dag_runs", data={})
         subprocess.call(["airflow", "trigger_dag", "airscooter_dag"], env=os.environ.copy())
 
         # DAGs are added to the schedule in a paused state by default. It is possible to have them added to the
@@ -257,7 +259,7 @@ def run():
         # The nuance here is that the CLI returns prior to the DAG Run actually being scheduled, so unpause will have
         # no effect in the quick sequence in which it runs. I insert a 1-second sleep here as a brute-force way of
         # keeping this from happening.
-        # TODO: This is a hack. There's got to be a better way of handling this.
+        # # TODO: This is a hack. There's got to be a better way of handling this.
         import time; time.sleep(1)
         subprocess.call(["airflow", "unpause", "airscooter_dag"], env=os.environ.copy())
     except:
